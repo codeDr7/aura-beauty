@@ -1,0 +1,5 @@
+[
+ {"doctype": "Subscription Plan", "plan_name": "Free", "price": 0, "billing_interval": "Monthly", "is_active": 1},
+ {"doctype": "Subscription Plan", "plan_name": "Aura Plus", "price": 9.99, "billing_interval": "Monthly", "is_active": 1},
+ {"doctype": "Subscription Plan", "plan_name": "Aura Premium", "price": 19.99, "billing_interval": "Monthly", "is_active": 1}
+]

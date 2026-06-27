@@ -1,0 +1,12 @@
+[
+ {"doctype": "Concern Tag", "concern_name": "Acne & Breakouts", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Aging & Fine Lines", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Dryness & Dehydration", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Dark Circles", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Hyperpigmentation", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Dullness", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Redness & Sensitivity", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Large Pores", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Oiliness", "is_active": 1},
+ {"doctype": "Concern Tag", "concern_name": "Texture Issues", "is_active": 1}
+]

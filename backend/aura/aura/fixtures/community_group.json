@@ -1,0 +1,5 @@
+[
+ {"doctype": "Community Group", "group_name": "Skincare Enthusiasts", "description": "For everyone passionate about skincare", "is_active": 1},
+ {"doctype": "Community Group", "group_name": "Beauty Minimalists", "description": "Less is more \u2014 simple routines", "is_active": 1},
+ {"doctype": "Community Group", "group_name": "Ingredient Investigators", "description": "Deep dive into ingredients and formulations", "is_active": 1}
+]

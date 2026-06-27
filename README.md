@@ -1,6 +1,6 @@
-# Aura - Beauty Intelligence Platform
+# AURA 1.0 — Beauty Intelligence Platform
 
-> Personalized beauty assessments, AI-powered product recommendations, and community-driven skincare & haircare routines.
+> Unified merge of `lumina_beauty` (luxury editorial design) and `aura_beauty` (full-stack Frappe/Flutter platform). Personalized beauty assessments, AI-powered product recommendations, and community-driven skincare & haircare routines.
 
 ---
 
@@ -28,6 +28,7 @@
 | [freezed](https://pub.dev/packages/freezed) | Immutable data classes |
 | [json_serializable](https://pub.dev/packages/json_serializable) | JSON serialization |
 | [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) | Secure token storage |
+| [google_fonts](https://pub.dev/packages/google_fonts) | Playfair Display + Manrope typography |
 
 ---
 
@@ -39,6 +40,8 @@
 - **Recommendation Engine**: AI-powered product matching with explainable scores
 - **Daily Routines**: Automated morning/evening routine generation
 - **Progress Tracking**: Photo-based progress with trend charts and insights
+- **Virtual Vanity**: Personal product shelf, usage tracking, expiry alerts, harmony reports
+- **The Journal**: Editorial content with featured articles, topics, and newsletter CTA
 
 ### Community
 - **Social Feed**: Share routines, reviews, and progress updates
@@ -55,6 +58,7 @@
 - **Dark Mode**: Full dark theme support
 - **Arabic Support**: RTL layout and Arabic localization
 - **Push Notifications**: Routine reminders and community updates
+- **Climate Matching**: Smart product recommendations based on local UV, humidity, pollution
 
 ---
 
@@ -94,18 +98,21 @@ aura_beauty/
 │   │   │   ├── network/
 │   │   │   ├── router/
 │   │   │   └── theme/
-│   │   ├── data/                      # Data layer
+│   │   ├── data/                      # Data layer (29 files)
 │   │   │   ├── datasources/
 │   │   │   ├── models/
 │   │   │   └── repositories/
-│   │   ├── domain/                    # Domain layer
+│   │   ├── domain/                    # Domain layer (28 files)
 │   │   │   ├── entities/
 │   │   │   ├── repositories/
 │   │   │   └── usecases/
+│   │   ├── repository_providers.dart  # DI wiring
 │   │   ├── presentation/              # Presentation layer
-│   │   │   ├── providers/
-│   │   │   ├── screens/               # 10 feature screens
-│   │   │   └── widgets/
+│   │   │   ├── providers/             # 5 state providers
+│   │   │   ├── screens/               # 12 feature screens
+│   │   │   │   ├── vanity/            # Virtual Vanity (ported from lumina)
+│   │   │   │   └── diary/             # Beauty Diary + Journal (ported)
+│   │   │   └── widgets/               # 9 shared widgets
 │   │   └── l10n/                      # Localization files
 │   └── pubspec.yaml
 │
@@ -159,13 +166,23 @@ flutter run
 
 ---
 
+## Design Philosophy
+
+The UI follows an **editorial luxury aesthetic** inspired by high-fashion beauty brands:
+
+- **Typography**: Playfair Display (serif headings) + Manrope (sans-serif body) — elegant, editorial feel
+- **Palette**: Warm neutrals (ivory, nude, sand) accented with matte gold, grounded by soft charcoal
+- **Spacing**: Generous white space with consistent 8px grid, 24px container margins
+- **AURA Wordmark**: `letterSpacing: 6.0` on the brand name for a premium, spaced-out logo feel
+- **Cards**: Soft rounded corners (`radiusCards: 24`), subtle borders, frosted-glass top bar
+
 ## Documentation
 
 | Document | Description |
 |---|---|
 | [Architecture](docs/ARCHITECTURE.md) | System architecture, clean architecture layers, data flow |
 | [API Contracts](docs/API_CONTRACTS.md) | Complete REST API reference with examples |
-| [Database Schema](docs/DATABASE_SCHEMA.md) | All 20 DocTypes, ERD, field definitions |
+| [Database Schema](docs/DATABASE_SCHEMA.md) | All 20+ DocTypes, ERD, field definitions |
 | [Deployment Guide](docs/DEPLOYMENT.md) | Production setup, CI/CD, monitoring |
 | [Development Roadmap](docs/DEVELOPMENT_ROADMAP.md) | 12-week sprint plan with tasks |
 | [Recommendation Engine](docs/RECOMMENDATION_ENGINE.md) | Scoring algorithm, weights, A/B testing |

@@ -122,7 +122,7 @@ def set_price_alert(product, target_price):
         "product": product,
         "target_price": target_price,
         "current_price": product_price,
-        "is_triggered": 1 if target_price >= product_price else 0,
+        "is_triggered": 1 if product_price <= target_price else 0,
         "created_date": frappe.utils.today(),
     })
     doc.insert(ignore_permissions=True)

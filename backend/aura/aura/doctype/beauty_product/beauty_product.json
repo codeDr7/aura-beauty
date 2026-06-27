@@ -4,73 +4,81 @@
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
- "field_order": [
-  "product_name",
-  "brand",
-  "images",
-  "description",
-  "price",
-  "category",
-  "routine_step",
-  "section_break_targets",
-  "skin_types",
-  "hair_types",
-  "concerns",
-  "ingredients",
-  "section_break_scoring",
-  "ai_weight",
-  "product_score",
-  "is_featured",
-  "is_subscription_exclusive",
-  "is_active"
- ],
- "fields": [
-  {
-   "fieldname": "product_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Product Name",
-   "reqd": 1,
-   "unique": 1
-  },
-  {
-   "fieldname": "brand",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Brand",
-   "reqd": 1
-  },
-  {
-   "fieldname": "images",
-   "fieldtype": "Attach Image",
-   "label": "Images"
-  },
-  {
-   "fieldname": "description",
-   "fieldtype": "Text",
-   "label": "Description"
-  },
-  {
-   "fieldname": "price",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Price",
-   "non_negative": 1
-  },
-  {
-   "fieldname": "category",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Category",
-   "options": "Skincare\nHaircare\nBody\nFragrance",
-   "reqd": 1
-  },
-  {
-   "fieldname": "routine_step",
-   "fieldtype": "Select",
-   "label": "Routine Step",
-   "options": "Cleanser\nToner\nSerum\nMoisturizer\nSPF\nShampoo\nConditioner\nHair Mask\nHair Serum\nTreatment"
-  },
+  "field_order": [
+   "product_name",
+   "brand",
+   "partner",
+   "images",
+   "description",
+   "price",
+   "category",
+   "routine_step",
+   "section_break_targets",
+   "skin_types",
+   "hair_types",
+   "concerns",
+   "ingredients",
+   "section_break_scoring",
+   "ai_weight",
+   "product_score",
+   "is_featured",
+   "is_subscription_exclusive",
+   "is_active"
+  ],
+  "fields": [
+   {
+    "fieldname": "product_name",
+    "fieldtype": "Data",
+    "in_list_view": 1,
+    "label": "Product Name",
+    "reqd": 1,
+    "unique": 1
+   },
+   {
+    "fieldname": "brand",
+    "fieldtype": "Data",
+    "in_list_view": 1,
+    "label": "Brand",
+    "reqd": 1
+   },
+   {
+    "fieldname": "partner",
+    "fieldtype": "Link",
+    "label": "Partner",
+    "options": "Marketplace Partner",
+    "read_only": 1
+   },
+   {
+    "fieldname": "images",
+    "fieldtype": "Attach Image",
+    "label": "Images"
+   },
+   {
+    "fieldname": "description",
+    "fieldtype": "Text",
+    "label": "Description"
+   },
+   {
+    "fieldname": "price",
+    "fieldtype": "Currency",
+    "in_list_view": 1,
+    "label": "Price",
+    "non_negative": 1
+   },
+   {
+    "fieldname": "category",
+    "fieldtype": "Select",
+    "in_list_view": 1,
+    "label": "Category",
+    "options": "Skincare\nHaircare\nBody\nFragrance",
+    "reqd": 1
+   },
+   {
+    "fieldname": "routine_step",
+    "fieldtype": "Select",
+    "label": "Routine Step",
+    "options": "Cleanser\nToner\nSerum\nMoisturizer\nSPF\nShampoo\nConditioner\nHair Mask\nHair Serum\nTreatment"
+   },
   {
    "fieldname": "section_break_targets",
    "fieldtype": "Section Break",

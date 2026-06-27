@@ -23,6 +23,8 @@ import '../../presentation/screens/ingredients/ingredient_checker_screen.dart';
 import '../../presentation/screens/analysis/skin_analysis_screen.dart';
 import '../../presentation/screens/alerts/price_alerts_screen.dart';
 import '../../presentation/screens/marketplace/marketplace_screen.dart';
+import '../../presentation/screens/vanity/vanity_screen.dart';
+import '../../presentation/screens/diary/journal_screen.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 import '../theme/app_spacing.dart';
@@ -405,6 +407,46 @@ class AppRouter {
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const MarketplaceScreen(initialTab: 1),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeInOutCubic,
+                )),
+                child: child,
+              );
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/vanity',
+          name: 'vanity',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const VanityScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeInOutCubic,
+                )),
+                child: child,
+              );
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/journal',
+          name: 'journal',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const JournalScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return SlideTransition(
                 position: Tween<Offset>(

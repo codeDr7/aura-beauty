@@ -117,16 +117,317 @@ def partner_update_order_status(order_id, status, invoice_url=None):
 
 @frappe.whitelist()
 def partner_get_products():
-    authenticate_partner()
+    partner = authenticate_partner()
 
     products = frappe.get_all(
         "Beauty Product",
-        filters={"is_active": 1},
-        fields=["name", "product_name", "brand", "description", "price", "category", "routine_step"],
-        order_by="brand asc, product_name asc"
+        filters={"partner": partner, "is_active": 1},
+        fields=["name", "product_name", "brand", "description", "price", "category", "routine_step", "product_score", "creation"],
+        order_by="creation desc"
     )
 
     return products
+
+
+@frappe.whitelist()
+def partner_create_product(data):
+    partner = authenticate_partner()
+
+    if isinstance(data, str):
+        data = frappe.parse_json(data)
+
+    if not data.get("product_name") or not data.get("brand"):
+        frappe.throw(_("Product name and brand are required"))
+
+    if data.get("price") is not None and float(data.get("price")) < 0:
+        frappe.throw(_("Price must be non-negative"))
+
+    existing = frappe.db.exists("Beauty Product", {"product_name": data["product_name"]})
+    if existing:
+        frappe.throw(_("A product with this name already exists"))
+
+    partner_name = frappe.db.get_value("Marketplace Partner", partner, "company_name")
+
+    doc = frappe.get_doc({
+        "doctype": "Beauty Product",
+        "product_name": data["product_name"],
+        "brand": data.get("brand", partner_name),
+        "partner": partner,
+        "description": data.get("description", ""),
+        "price": data.get("price", 0),
+        "category": data.get("category", "Skincare"),
+        "routine_step": data.get("routine_step"),
+        "product_score": data.get("product_score", 0),
+        "is_active": 1,
+    })
+
+    if data.get("concerns"):
+        for c in data["concerns"]:
+            doc.append("concerns", {"concern": c})
+
+    if data.get("ingredients"):
+        for i in data["ingredients"]:
+            doc.append("ingredients", {"concern": i})
+
+    doc.insert(ignore_permissions=True)
+    frappe.db.commit()
+
+    return {
+        "message": _("Product created successfully"),
+        "product": doc.as_dict(),
+    }
+
+
+@frappe.whitelist()
+def partner_update_product(product_name, data):
+    partner = authenticate_partner()
+
+    if isinstance(data, str):
+        data = frappe.parse_json(data)
+
+    product_name = frappe.db.get_value(
+        "Beauty Product",
+        {"product_name": product_name, "partner": partner, "is_active": 1},
+        "name"
+    )
+    if not product_name:
+        frappe.throw(_("Product not found or not owned by your company"))
+
+    doc = frappe.get_doc("Beauty Product", product_name)
+
+    updatable_fields = ["brand", "description", "price", "category", "routine_step", "product_score"]
+    for field in updatable_fields:
+        if field in data:
+            setattr(doc, field, data[field])
+
+    if data.get("is_active") is not None:
+        doc.is_active = 1 if data["is_active"] else 0
+
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+
+    return {
+        "message": _("Product updated successfully"),
+        "product": doc.as_dict(),
+    }
+
+
+@frappe.whitelist()
+def partner_delete_product(product_name):
+    partner = authenticate_partner()
+
+    product_name = frappe.db.get_value(
+        "Beauty Product",
+        {"product_name": product_name, "partner": partner},
+        "name"
+    )
+    if not product_name:
+        frappe.throw(_("Product not found or not owned by your company"))
+
+    doc = frappe.get_doc("Beauty Product", product_name)
+    doc.is_active = 0
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+
+    return {"message": _("Product deactivated successfully")}
+
+
+@frappe.whitelist()
+def partner_bulk_import():
+    partner = authenticate_partner()
+
+    from frappe.handler import upload_file
+    file_doc = upload_file()
+
+    if not file_doc:
+        frappe.throw(_("No file uploaded"))
+
+    file_path = file_doc.get_full_path()
+    if not file_path:
+        frappe.throw(_("Could not read uploaded file"))
+
+    rows = []
+    headers = ["product_name", "brand", "description", "price", "category", "routine_step"]
+
+    if file_path.endswith(".xlsx"):
+        try:
+            import openpyxl
+            wb = openpyxl.load_workbook(file_path, read_only=True)
+            ws = wb.active
+            file_headers = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
+            for row in ws.iter_rows(min_row=2, values_only=True):
+                rows.append(dict(zip(file_headers, row)))
+            wb.close()
+        except Exception:
+            frappe.throw(_("Invalid Excel file format"))
+    else:
+        try:
+            import csv
+            with open(file_path, "r", encoding="utf-8-sig") as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+        except Exception:
+            frappe.throw(_("Invalid CSV file format"))
+
+    created = 0
+    errors = []
+    partner_name = frappe.db.get_value("Marketplace Partner", partner, "company_name")
+
+    for i, row in enumerate(rows):
+        try:
+            name = (row.get("product_name") or "").strip()
+            brand = (row.get("brand") or "").strip()
+
+            if not name or not brand:
+                errors.append(f"Row {i + 2}: Missing product_name or brand")
+                continue
+
+            doc = frappe.get_doc({
+                "doctype": "Beauty Product",
+                "product_name": name,
+                "brand": brand,
+                "partner": partner,
+                "description": (row.get("description") or "").strip(),
+                "price": float(row.get("price") or 0),
+                "category": (row.get("category") or "Skincare").strip(),
+                "routine_step": (row.get("routine_step") or "").strip(),
+                "product_score": float(row.get("product_score") or 0),
+                "is_active": 1,
+            })
+            doc.insert(ignore_permissions=True)
+            created += 1
+        except Exception as e:
+            errors.append(f"Row {i + 2}: {str(e)}")
+
+    frappe.db.commit()
+
+    return {
+        "message": _("{0} products created, {1} errors").format(created, len(errors)),
+        "created": created,
+        "errors": errors,
+    }
+
+
+@frappe.whitelist()
+def partner_download_template():
+    partner = authenticate_partner()
+
+    headers = ["product_name", "brand", "description", "price", "category", "routine_step"]
+    categories = "Skincare,Haircare,Body,Fragrance"
+    routine_steps = "Cleanser,Toner,Serum,Moisturizer,SPF,Shampoo,Conditioner,Hair Mask,Hair Serum,Treatment"
+
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from openpyxl.utils import get_column_letter
+        from openpyxl.worksheet.datavalidation import DataValidation
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Product Template"
+
+        header_font = Font(name="Calibri", bold=True, color="FFFFFF", size=11)
+        header_fill = PatternFill(start_color="C4A44A", end_color="C4A44A", fill_type="solid")
+        header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        thin_border = Border(
+            left=Side(style="thin", color="D1C4A9"),
+            right=Side(style="thin", color="D1C4A9"),
+            top=Side(style="thin", color="D1C4A9"),
+            bottom=Side(style="thin", color="D1C4A9"),
+        )
+
+        for col_idx, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_idx, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+            cell.border = thin_border
+
+        ws.column_dimensions["A"].width = 30
+        ws.column_dimensions["B"].width = 22
+        ws.column_dimensions["C"].width = 40
+        ws.column_dimensions["D"].width = 12
+        ws.column_dimensions["E"].width = 16
+        ws.column_dimensions["F"].width = 18
+
+        dv_category = DataValidation(type="list", formula1=f'"{categories}"', allow_blank=True)
+        dv_category.error = "Please select a valid category"
+        dv_category.errorTitle = "Invalid Category"
+        ws.add_data_validation(dv_category)
+        dv_category.add(f"E2:E1000")
+
+        dv_step = DataValidation(type="list", formula1=f'"{routine_steps}"', allow_blank=True)
+        dv_step.error = "Please select a valid routine step"
+        dv_step.errorTitle = "Invalid Routine Step"
+        ws.add_data_validation(dv_step)
+        dv_step.add(f"F2:F1000")
+
+        ws.sheet_properties.tabColor = "C4A44A"
+
+        from io import BytesIO
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        frappe.response["filename"] = "aura_product_template.xlsx"
+        frappe.response["filecontent"] = output.getvalue()
+        frappe.response["type"] = "binary"
+        frappe.response["content_type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+    except ImportError:
+        import csv
+        import io
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(headers)
+        writer.writerow(["Example Hydrating Serum", "Your Brand", "A rich hydrating serum with hyaluronic acid", "52.00", "Skincare", "Serum"])
+        writer.writerow(["Example Night Cream", "Your Brand", "Retinol night recovery cream", "68.00", "Skincare", "Moisturizer"])
+
+        frappe.response["filename"] = "aura_product_template.csv"
+        frappe.response["filecontent"] = output.getvalue()
+        frappe.response["type"] = "binary"
+        frappe.response["content_type"] = "text/csv"
+
+
+@frappe.whitelist()
+def partner_get_analytics():
+    partner = authenticate_partner()
+
+    total_products = frappe.db.count("Beauty Product", {"partner": partner, "is_active": 1})
+    total_orders = frappe.db.count("Marketplace Order", {"partner": partner})
+    total_revenue = frappe.db.sql("""
+        SELECT COALESCE(SUM(total_price), 0) FROM `tabMarketplace Order`
+        WHERE partner = %s AND order_status NOT IN ('Cancelled')
+    """, partner)[0][0]
+
+    orders_by_status = frappe.db.sql("""
+        SELECT order_status, COUNT(*) as count
+        FROM `tabMarketplace Order`
+        WHERE partner = %s
+        GROUP BY order_status
+    """, partner, as_dict=True)
+
+    return {
+        "total_products": total_products,
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "orders_by_status": orders_by_status,
+    }
+
+
+@frappe.whitelist()
+def partner_get_api_credentials():
+    partner = authenticate_partner()
+
+    doc = frappe.get_doc("Marketplace Partner", partner)
+
+    return {
+        "api_key": doc.api_key,
+        "api_secret": doc.api_secret,
+        "webhook_url": doc.webhook_url,
+        "company_name": doc.company_name,
+        "integration_type": doc.integration_type,
+    }
 
 
 # ---- User-facing APIs ----

@@ -1,13 +1,15 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/app_gradients.dart';
-import '../../widgets/common/aura_card.dart';
 import '../../widgets/common/aura_button.dart';
-import '../../widgets/common/product_card.dart';
 import '../../widgets/common/section_header.dart';
 
 class MarketplaceScreen extends ConsumerStatefulWidget {
@@ -33,6 +35,22 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
 
   final _integrationTypes = ['REST API', 'GraphQL', 'Webhook', 'Custom SDK'];
 
+  final _partnerProducts = <_PartnerProduct>[
+    _PartnerProduct(name: 'Luminous Hydrating Serum', brand: 'Aura Labs', price: '\$52.00', category: 'Skincare', routineStep: 'Serum'),
+    _PartnerProduct(name: 'Retinol Night Recovery', brand: 'Aura Labs', price: '\$68.00', category: 'Skincare', routineStep: 'Moisturizer'),
+    _PartnerProduct(name: 'Gentle Foaming Cleanse', brand: 'Aura Labs', price: '\$28.00', category: 'Skincare', routineStep: 'Cleanser'),
+  ];
+  bool _showAddProductForm = false;
+
+  final _productNameController = TextEditingController();
+  final _productBrandController = TextEditingController();
+  final _productDescriptionController = TextEditingController();
+  final _productPriceController = TextEditingController();
+  String _productCategory = 'Skincare';
+  String _productRoutineStep = 'Serum';
+  final _productCategories = ['Skincare', 'Haircare', 'Body', 'Fragrance'];
+  final _productRoutineSteps = ['Cleanser', 'Toner', 'Serum', 'Moisturizer', 'SPF', 'Shampoo', 'Conditioner', 'Hair Mask', 'Hair Serum', 'Treatment'];
+
   final _products = [
     _ShopProduct(name: 'Luminous Hydrating Serum', brand: 'Aura Labs', price: '\$52.00', orders: 234),
     _ShopProduct(name: 'Retinol Night Recovery', brand: 'DermaPrime', price: '\$68.00', orders: 189),
@@ -53,6 +71,10 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
     _PartnerOrder(id: 'ORD-005', customer: 'Mia T.', product: 'SPF 50', quantity: 2, status: 'Pending', date: 'Jun 20'),
   ];
 
+  bool _bulkImporting = false;
+  String? _bulkImportResult;
+  bool _bulkImportSuccess = false;
+
   @override
   void initState() {
     super.initState();
@@ -65,6 +87,10 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
     _companyNameController.dispose();
     _emailController.dispose();
     _contactPersonController.dispose();
+    _productNameController.dispose();
+    _productBrandController.dispose();
+    _productDescriptionController.dispose();
+    _productPriceController.dispose();
     super.dispose();
   }
 
@@ -287,6 +313,32 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
           const SizedBox(height: AppSpacing.md),
           if (_showApiKeys) _buildApiKeys(),
           if (_showApiKeys) const SizedBox(height: AppSpacing.md),
+          Padding(
+            padding: AppSpacing.horizontalPadding,
+            child: SectionHeader(title: 'My Products', subtitle: '${_partnerProducts.length} products'),
+          ),
+          if (_showAddProductForm) _buildAddProductForm(),
+          if (_showAddProductForm) const SizedBox(height: AppSpacing.sm),
+          ...List.generate(_partnerProducts.length, (i) {
+            return _buildPartnerProductCard(_partnerProducts[i], i);
+          }),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.pageHorizontalPadding,
+              8,
+              AppSpacing.pageHorizontalPadding,
+              4,
+            ),
+            child: AuraButton(
+              label: _showAddProductForm ? 'Cancel' : 'Add Product',
+              onPressed: () => setState(() => _showAddProductForm = !_showAddProductForm),
+              trailingIcon: _showAddProductForm ? Icons.close : Icons.add,
+              isSecondary: !_showAddProductForm,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _buildBulkImportSection(),
+          const SizedBox(height: AppSpacing.lg),
           Padding(
             padding: AppSpacing.horizontalPadding,
             child: SectionHeader(title: 'Incoming Orders', subtitle: '${_orders.length} total'),
@@ -531,6 +583,355 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
       ),
     );
   }
+
+  Widget _buildAddProductForm() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.pageHorizontalPadding,
+        8,
+        AppSpacing.pageHorizontalPadding,
+        0,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.matteGold.withOpacity(0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.add_circle_outline, size: 18, color: AppColors.matteGold),
+                const SizedBox(width: 8),
+                Text('New Product', style: AppTypography.cardTitle.copyWith(fontSize: 16, color: AppColors.softCharcoal)),
+              ],
+            ),
+            const SizedBox(height: 14),
+            _buildField('Product Name', _productNameController),
+            const SizedBox(height: 12),
+            _buildField('Brand', _productBrandController),
+            const SizedBox(height: 12),
+            _buildField('Description', _productDescriptionController),
+            const SizedBox(height: 12),
+            _buildField('Price', _productPriceController),
+            const SizedBox(height: 12),
+            Text('Category', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.softCharcoal)),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.outlineVariant),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _productCategory,
+                  isExpanded: true,
+                  items: _productCategories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                  onChanged: (v) => setState(() => _productCategory = v!),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text('Routine Step', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.softCharcoal)),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.outlineVariant),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _productRoutineStep,
+                  isExpanded: true,
+                  items: _productRoutineSteps.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                  onChanged: (v) => setState(() => _productRoutineStep = v!),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: AuraButton(
+                    label: 'Save Product',
+                    onPressed: () {
+                      if (_productNameController.text.trim().isEmpty) return;
+                      setState(() {
+                        _partnerProducts.add(_PartnerProduct(
+                          name: _productNameController.text.trim(),
+                          brand: _productBrandController.text.trim().isEmpty
+                              ? 'Aura Labs'
+                              : _productBrandController.text.trim(),
+                          price: _productPriceController.text.trim().isEmpty
+                              ? '\$0.00'
+                              : '\$${_productPriceController.text.trim()}',
+                          category: _productCategory,
+                          routineStep: _productRoutineStep,
+                        ));
+                        _productNameController.clear();
+                        _productBrandController.clear();
+                        _productDescriptionController.clear();
+                        _productPriceController.clear();
+                        _showAddProductForm = false;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBulkImportSection() {
+    return Padding(
+      padding: AppSpacing.horizontalPadding,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.cloud_upload_outlined, size: 18, color: AppColors.matteGold),
+                const SizedBox(width: 8),
+                Text('Bulk Import Products', style: AppTypography.cardTitle.copyWith(fontSize: 16, color: AppColors.softCharcoal)),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Upload a CSV or Excel file to add multiple products at once.',
+              style: AppTypography.caption.copyWith(color: AppColors.onSurfaceVariant),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: AuraButton(
+                    label: 'Download Template',
+                    onPressed: _downloadTemplate,
+                    trailingIcon: Icons.download_rounded,
+                    isSecondary: true,
+                    isFullWidth: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AuraButton(
+                    label: _bulkImporting ? 'Uploading...' : 'Upload File',
+                    onPressed: _bulkImporting ? null : _uploadBulkImport,
+                    trailingIcon: _bulkImporting ? null : Icons.upload_file,
+                    isFullWidth: true,
+                  ),
+                ),
+              ],
+            ),
+            if (_bulkImportResult != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _bulkImportSuccess ? AppColors.sageGreen.withOpacity(0.1) : AppColors.error.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _bulkImportSuccess ? Icons.check_circle : Icons.error_outline,
+                      size: 18,
+                      color: _bulkImportSuccess ? AppColors.sageGreen : AppColors.error,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _bulkImportResult!,
+                        style: AppTypography.caption.copyWith(
+                          color: _bulkImportSuccess ? AppColors.sageGreen : AppColors.error,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _downloadTemplate() async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final path = '${dir.path}/aura_product_template.xlsx';
+      final dio = Dio();
+
+      await dio.download(
+        'https://api.aurabeauty.app/api/method/aura.api.marketplace.partner_download_template',
+        path,
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _bulkImportResult = 'Template downloaded to $path';
+        _bulkImportSuccess = true;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _bulkImportResult = 'Could not reach server. Creating local template...');
+      _createSampleTemplateLocally();
+    }
+  }
+
+  Future<void> _createSampleTemplateLocally() async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/aura_product_template.csv');
+      final content = 'product_name,brand,description,price,category,routine_step\n'
+          'Example Serum,Your Brand,A rich hydrating serum,52.00,Skincare,Serum\n'
+          'Example Cream,Your Brand,Retinol night cream,68.00,Skincare,Moisturizer\n';
+      await file.writeAsString(content);
+
+      if (!mounted) return;
+      setState(() {
+        _bulkImportResult = 'Sample CSV created at ${file.path}. Fill it out and upload.';
+        _bulkImportSuccess = true;
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _uploadBulkImport() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv', 'xlsx'],
+    );
+
+    if (result == null || result.files.single.path == null) return;
+
+    setState(() {
+      _bulkImporting = true;
+      _bulkImportResult = null;
+    });
+
+    try {
+      final dio = Dio();
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          result.files.single.path!,
+          filename: result.files.single.name,
+        ),
+      });
+
+      final response = await dio.post(
+        'https://api.aurabeauty.app/api/method/aura.api.marketplace.partner_bulk_import',
+        data: formData,
+      );
+
+      if (!mounted) return;
+      final data = response.data as Map<String, dynamic>?;
+      if (data != null && data['message'] != null) {
+        final errors = (data['errors'] as List?) ?? [];
+        setState(() {
+          _bulkImportResult = data['message'].toString();
+          _bulkImportSuccess = errors.isEmpty;
+        });
+      } else {
+        setState(() {
+          _bulkImportResult = 'Import completed with unknown result';
+          _bulkImportSuccess = true;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _bulkImportResult = 'Simulating upload — ${_partnerProducts.length} products in catalog. Server unavailable.';
+        _bulkImportSuccess = false;
+      });
+    } finally {
+      if (mounted) setState(() => _bulkImporting = false);
+    }
+  }
+
+  Widget _buildPartnerProductCard(_PartnerProduct product, int index) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.pageHorizontalPadding,
+        0,
+        AppSpacing.pageHorizontalPadding,
+        8,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.warmNude.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(Icons.spa_outlined, color: AppColors.primary, size: 24),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(product.name, style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.softCharcoal)),
+                  const SizedBox(height: 2),
+                  Text('${product.brand} · ${product.category}', style: AppTypography.caption.copyWith(color: AppColors.onSurfaceVariant)),
+                  Text(product.routineStep, style: AppTypography.caption.copyWith(color: AppColors.matteGold, fontSize: 11)),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(product.price, style: AppTypography.cardTitle.copyWith(fontSize: 15, color: AppColors.softCharcoal)),
+                const SizedBox(height: 6),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _partnerProducts.removeAt(index);
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text('Remove', style: AppTypography.caption.copyWith(color: AppColors.error, fontWeight: FontWeight.w600, fontSize: 11)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _ShopProduct {
@@ -562,6 +963,22 @@ class _PartnerOrder {
     required this.quantity,
     required this.status,
     required this.date,
+  });
+}
+
+class _PartnerProduct {
+  final String name;
+  final String brand;
+  final String price;
+  final String category;
+  final String routineStep;
+
+  const _PartnerProduct({
+    required this.name,
+    required this.brand,
+    required this.price,
+    required this.category,
+    required this.routineStep,
   });
 }
 

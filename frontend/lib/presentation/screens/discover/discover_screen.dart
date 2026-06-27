@@ -50,6 +50,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     SizedBox(height: AppSpacing.lg),
                     _FeaturedArticles(),
                     SizedBox(height: AppSpacing.lg),
+                    _ClimateMatching(),
+                    SizedBox(height: AppSpacing.lg),
                     _FeaturedProducts(),
                     SizedBox(height: AppSpacing.xxl),
                   ],
@@ -260,6 +262,64 @@ class _ArticleCard extends StatelessWidget {
               const Icon(Icons.menu_book_outlined, size: 14, color: AppColors.onSurfaceVariant),
               const SizedBox(width: 4),
               Text(reads, style: AppTypography.caption.copyWith(color: AppColors.onSurfaceVariant)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ClimateMatching extends StatelessWidget {
+  const _ClimateMatching();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: AppSpacing.horizontalPadding,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        decoration: BoxDecoration(
+          color: AppColors.warmNude.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXxl),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Smart Discovery: Climate Matching',
+                style: AppTypography.sectionTitle.copyWith(color: AppColors.softCharcoal)),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Our AI analyzes your local humidity, UV index, and pollution levels to recommend a dynamic skincare regimen that adapts to your environment.',
+              style: AppTypography.bodyMain.copyWith(color: AppColors.onSurfaceVariant, height: 1.7),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            _climateChip(Icons.wb_sunny_outlined, 'YOUR CLIMATE', 'Arid & High UV'),
+            const SizedBox(height: AppSpacing.sm),
+            _climateChip(Icons.recommend_outlined, 'RECOMMENDATION', 'Hydration Lock Kit'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _climateChip(IconData icon, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        border: Border.all(color: Colors.white),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: AppColors.matteGold, size: 22),
+          const SizedBox(width: AppSpacing.sm),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: AppTypography.caption.copyWith(color: AppColors.onSurfaceVariant.withOpacity(0.6), fontSize: 10, letterSpacing: 1)),
+              Text(value, style: AppTypography.bodyMain.copyWith(fontWeight: FontWeight.w700)),
             ],
           ),
         ],

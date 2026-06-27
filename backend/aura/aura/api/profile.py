@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from aura.api import profile_update_handler
 
 
 def get_current_profile():
@@ -125,7 +126,7 @@ def get_intelligence_summary():
         "scores": {
             "skin": profile.skin_score,
             "hair": profile.hair_score,
-            "overall": profile.overall_beauty_score or round(((profile.skin_score or 0) + (profile.hair_score or 0)) / 2, 1),
+            "overall": profile.overall_beauty_score if profile.overall_beauty_score is not None else round(((profile.skin_score or 0) + (profile.hair_score or 0)) / 2, 1),
             "consistency": profile.routine_consistency_score,
             "improvement": profile.improvement_rate or 0,
         },
@@ -185,4 +186,4 @@ def get_hair_score():
 
 
 def on_profile_update(doc, method):
-    pass
+    profile_update_handler.record_action(doc.name, "profile_updated")

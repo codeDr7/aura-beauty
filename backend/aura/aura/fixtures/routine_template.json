@@ -1,0 +1,4 @@
+[
+ {"doctype": "Routine Template", "routine_name": "Morning Essentials", "routine_type": "Morning", "is_active": 1},
+ {"doctype": "Routine Template", "routine_name": "Night Recovery", "routine_type": "Night", "is_active": 1}
+]
