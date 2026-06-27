@@ -1,0 +1,70 @@
+{
+ "autoname": "format:URS-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+   "step_number",
+   "step_name",
+   "product",
+   "is_completed",
+   "completed_time",
+   "duration_seconds",
+   "notes"
+  ],
+  "fields": [
+   {
+    "fieldname": "step_number",
+    "fieldtype": "Int",
+    "in_list_view": 1,
+    "label": "Step Number",
+    "reqd": 1
+   },
+   {
+    "fieldname": "step_name",
+    "fieldtype": "Data",
+    "in_list_view": 1,
+    "label": "Step Name",
+    "reqd": 1
+   },
+   {
+    "fieldname": "product",
+    "fieldtype": "Link",
+    "in_list_view": 1,
+    "label": "Product",
+    "options": "Beauty Product"
+   },
+   {
+    "default": "0",
+    "fieldname": "is_completed",
+    "fieldtype": "Check",
+    "label": "Is Completed"
+   },
+   {
+    "fieldname": "completed_time",
+    "fieldtype": "Time",
+    "label": "Completed Time"
+   },
+   {
+    "fieldname": "duration_seconds",
+    "fieldtype": "Int",
+    "label": "Duration (Seconds)"
+   },
+   {
+    "fieldname": "notes",
+    "fieldtype": "Text",
+    "label": "Notes"
+   }
+  ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "User Routine Step",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

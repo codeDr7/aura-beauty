@@ -1,0 +1,130 @@
+{
+ "autoname": "format:POST-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "content",
+  "image",
+  "post_type",
+  "group",
+  "likes",
+  "comments_count",
+  "saves_count",
+  "is_published",
+  "is_featured"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "Beauty User Profile",
+   "reqd": 1
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Content",
+   "reqd": 1
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
+  },
+  {
+   "default": "Text",
+   "fieldname": "post_type",
+   "fieldtype": "Select",
+   "label": "Post Type",
+   "options": "Text\nImage\nVideo"
+  },
+  {
+   "fieldname": "group",
+   "fieldtype": "Link",
+   "label": "Group",
+   "options": "Community Group"
+  },
+  {
+   "default": "0",
+   "fieldname": "likes",
+   "fieldtype": "Int",
+   "label": "Likes",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "comments_count",
+   "fieldtype": "Int",
+   "label": "Comments Count",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "saves_count",
+   "fieldtype": "Int",
+   "label": "Saves Count",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Is Published"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_featured",
+   "fieldtype": "Check",
+   "label": "Is Featured"
+  }
+ ],
+ "icon": "fa fa-comments",
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Comments",
+   "link_doctype": "Community Comment",
+   "link_fieldname": "post"
+  }
+ ],
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Community Post",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

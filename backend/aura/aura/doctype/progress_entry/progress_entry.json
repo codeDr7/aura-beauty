@@ -1,0 +1,132 @@
+{
+ "autoname": "format:PROG-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "entry_date",
+  "section_break_scores",
+  "skin_score",
+  "hair_score",
+  "section_break_media",
+  "photos",
+  "notes",
+  "section_break_lifestyle",
+  "adherence_rate",
+  "mood",
+  "sleep_quality"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "Beauty User Profile",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "entry_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Entry Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_scores",
+   "fieldtype": "Section Break",
+   "label": "Scores"
+  },
+  {
+   "fieldname": "skin_score",
+   "fieldtype": "Float",
+   "label": "Skin Score",
+   "min": 0,
+   "max": 100
+  },
+  {
+   "fieldname": "hair_score",
+   "fieldtype": "Float",
+   "label": "Hair Score",
+   "min": 0,
+   "max": 100
+  },
+  {
+   "fieldname": "section_break_media",
+   "fieldtype": "Section Break",
+   "label": "Media"
+  },
+  {
+   "fieldname": "photos",
+   "fieldtype": "Attach Image",
+   "label": "Photos"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "section_break_lifestyle",
+   "fieldtype": "Section Break",
+   "label": "Daily Check-in"
+  },
+  {
+   "fieldname": "adherence_rate",
+   "fieldtype": "Percent",
+   "label": "Adherence Rate"
+  },
+  {
+   "fieldname": "mood",
+   "fieldtype": "Select",
+   "label": "Mood",
+   "options": "Great\nGood\nNeutral\nLow\nStressed"
+  },
+  {
+   "fieldname": "sleep_quality",
+   "fieldtype": "Select",
+   "label": "Sleep Quality",
+   "options": "Poor\nFair\nGood\nExcellent"
+  }
+ ],
+ "icon": "fa fa-line-chart",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Progress Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

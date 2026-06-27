@@ -1,0 +1,191 @@
+{
+ "autoname": "field:user",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "full_name",
+  "age_range",
+  "gender",
+  "country",
+  "climate",
+  "skin_type",
+  "skin_sensitivity",
+  "hair_type",
+  "skin_score",
+  "hair_score",
+  "onboarding_completed",
+  "subscription_status",
+  "created_date",
+  "last_assessment_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "age_range",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Age Range",
+   "options": "18-24\n25-34\n35-44\n45-54\n55+",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Female\nMale\nNon-Binary\nPrefer not to say"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "climate",
+   "fieldtype": "Select",
+   "label": "Climate",
+   "options": "Tropical\nDry\nTemperate\nContinental\nPolar"
+  },
+  {
+   "fieldname": "skin_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Skin Type",
+   "options": "Oily\nDry\nCombination\nNormal"
+  },
+  {
+   "fieldname": "skin_sensitivity",
+   "fieldtype": "Select",
+   "label": "Skin Sensitivity",
+   "options": "Low\nMedium\nHigh"
+  },
+  {
+   "fieldname": "hair_type",
+   "fieldtype": "Select",
+   "label": "Hair Type",
+   "options": "Straight\nWavy\nCurly\nCoily"
+  },
+  {
+   "fieldname": "skin_score",
+   "fieldtype": "Float",
+   "label": "Skin Score",
+   "min": 0,
+   "max": 100
+  },
+  {
+   "fieldname": "hair_score",
+   "fieldtype": "Float",
+   "label": "Hair Score",
+   "min": 0,
+   "max": 100
+  },
+  {
+   "default": "0",
+   "fieldname": "onboarding_completed",
+   "fieldtype": "Check",
+   "label": "Onboarding Completed"
+  },
+  {
+   "default": "Free",
+   "fieldname": "subscription_status",
+   "fieldtype": "Select",
+   "label": "Subscription Status",
+   "options": "Free\nAura Plus\nAura Premium"
+  },
+  {
+   "fieldname": "created_date",
+   "fieldtype": "Date",
+   "label": "Created Date"
+  },
+  {
+   "fieldname": "last_assessment_date",
+   "fieldtype": "Date",
+   "label": "Last Assessment Date"
+  }
+ ],
+ "icon": "fa fa-user",
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Assessments",
+   "link_doctype": "Skin Assessment",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Assessments",
+   "link_doctype": "Hair Assessment",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Assessments",
+   "link_doctype": "Lifestyle Assessment",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Routines",
+   "link_doctype": "User Routine",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Progress",
+   "link_doctype": "Progress Entry",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Community",
+   "link_doctype": "Community Post",
+   "link_fieldname": "user"
+  }
+ ],
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Beauty User Profile",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

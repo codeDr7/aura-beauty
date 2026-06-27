@@ -1,0 +1,127 @@
+{
+ "autoname": "format:DIARY-{YYYY}-{MM}-{DD}-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "entry_date",
+  "mood",
+  "sleep_hours",
+  "water_intake",
+  "stress_level",
+  "skin_condition",
+  "breakout_location",
+  "notes",
+  "photo",
+  "created_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "Beauty User Profile",
+   "reqd": 1
+  },
+  {
+   "fieldname": "entry_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Entry Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mood",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Mood",
+   "options": "Great\nGood\nOkay\nBad\nTerrible"
+  },
+  {
+   "fieldname": "sleep_hours",
+   "fieldtype": "Float",
+   "label": "Sleep Hours",
+   "min": 0,
+   "max": 24
+  },
+  {
+   "fieldname": "water_intake",
+   "fieldtype": "Select",
+   "label": "Water Intake",
+   "options": "Low\nMedium\nHigh"
+  },
+  {
+   "fieldname": "stress_level",
+   "fieldtype": "Select",
+   "label": "Stress Level",
+   "options": "Low\nMedium\nHigh"
+  },
+  {
+   "fieldname": "skin_condition",
+   "fieldtype": "Select",
+   "label": "Skin Condition",
+   "options": "Clear\nMinor Breakout\nModerate Breakout\nDry\nOily\nRed\nIrritated"
+  },
+  {
+   "fieldname": "breakout_location",
+   "fieldtype": "Data",
+   "label": "Breakout Location"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
+  },
+  {
+   "default": "Now",
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "label": "Created At"
+  }
+ ],
+ "icon": "fa fa-book",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Beauty Diary Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

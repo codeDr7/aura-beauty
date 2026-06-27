@@ -1,0 +1,59 @@
+# Flutter
+frontend/.dart_tool/
+frontend/.packages
+frontend/.pub/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/build/
+frontend/.metadata
+frontend/*.iml
+frontend/ios/Pods/
+frontend/ios/.symlinks/
+frontend/android/.gradle/
+frontend/android/local.properties
+frontend/android/key.properties
+frontend/android/app/google-services.json
+frontend/.env
+frontend/.env.production
+
+# Python / ERPNext
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/**/*.egg-info/
+backend/**/dist/
+backend/**/build/
+backend/**/.bench/
+backend/**/sites/
+backend/**/node_modules/
+backend/aura/setup.py
+backend/aura/requirements.txt
+
+# Docs
+docs/_book/
+docs/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+*.sublime-workspace
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

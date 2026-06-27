@@ -1,0 +1,56 @@
+{
+ "autoname": "format:RTS-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "step_number",
+  "step_name",
+  "step_description",
+  "duration_minutes",
+  "product_category"
+ ],
+ "fields": [
+  {
+   "fieldname": "step_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Step Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "step_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Step Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "step_description",
+   "fieldtype": "Small Text",
+   "label": "Step Description"
+  },
+  {
+   "fieldname": "duration_minutes",
+   "fieldtype": "Int",
+   "label": "Duration (Minutes)"
+  },
+  {
+   "fieldname": "product_category",
+   "fieldtype": "Link",
+   "label": "Product Category",
+   "options": "Beauty Product"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Routine Template Step",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

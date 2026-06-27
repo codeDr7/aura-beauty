@@ -1,0 +1,105 @@
+{
+ "autoname": "format:REC-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "recommendation_date",
+  "recommendation_type",
+  "score",
+  "products",
+  "is_applied",
+  "feedback"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "Beauty User Profile",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "recommendation_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Recommendation Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recommendation_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Recommendation Type",
+   "options": "Products\nRoutine\nLifestyle",
+   "reqd": 1
+  },
+  {
+   "fieldname": "score",
+   "fieldtype": "Float",
+   "label": "Score",
+   "min": 0,
+   "max": 100
+  },
+  {
+   "fieldname": "products",
+   "fieldtype": "Table",
+   "label": "Products",
+   "options": "Recommended Product"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_applied",
+   "fieldtype": "Check",
+   "label": "Is Applied"
+  },
+  {
+   "default": "Not Rated",
+   "fieldname": "feedback",
+   "fieldtype": "Select",
+   "label": "Feedback",
+   "options": "Not Rated\nHelpful\nNot Helpful"
+  }
+ ],
+ "icon": "fa fa-star",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Recommendation Result",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

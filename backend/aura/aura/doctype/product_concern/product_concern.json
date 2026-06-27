@@ -1,0 +1,30 @@
+{
+ "autoname": "format:PC-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "concern"
+ ],
+ "fields": [
+  {
+   "fieldname": "concern",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Concern",
+   "options": "Concern Tag",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Product Concern",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

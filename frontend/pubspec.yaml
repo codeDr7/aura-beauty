@@ -1,0 +1,44 @@
+name: aura_beauty
+description: Aura - Beauty Intelligence Platform
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.18.1
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  go_router: ^13.0.1
+  google_fonts: ^6.1.0
+  cached_network_image: ^3.3.1
+  dio: ^5.4.0
+  flutter_secure_storage: ^9.0.0
+  json_annotation: ^4.8.1
+  freezed_annotation: ^2.4.1
+  shimmer: ^3.0.0
+  fl_chart: ^0.66.2
+  image_picker: ^1.0.7
+  firebase_messaging: ^14.7.15
+  flutter_local_notifications: ^17.0.0
+  share_plus: ^7.2.1
+  path_provider: ^2.1.2
+  connectivity_plus: ^5.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.8
+  json_serializable: ^6.7.1
+  freezed: ^2.4.6
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

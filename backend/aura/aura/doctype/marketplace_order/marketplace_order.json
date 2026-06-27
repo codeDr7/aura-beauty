@@ -1,0 +1,136 @@
+{
+ "autoname": "format:MO-{YYYY}-{MM}-{DD}-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "order_id",
+  "partner",
+  "user",
+  "items",
+  "total_price",
+  "order_status",
+  "partner_order_ref",
+  "invoice_url",
+  "ordered_date",
+  "delivery_address",
+  "payment_status",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "order_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Order ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "partner",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Partner",
+   "options": "Marketplace Partner",
+   "reqd": 1
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "Beauty User Profile",
+   "reqd": 1
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Marketplace Order Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_price",
+   "fieldtype": "Currency",
+   "label": "Total Price",
+   "non_negative": 1
+  },
+  {
+   "default": "Pending",
+   "fieldname": "order_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Order Status",
+   "options": "Pending\nConfirmed\nProcessing\nShipped\nDelivered\nCancelled"
+  },
+  {
+   "fieldname": "partner_order_ref",
+   "fieldtype": "Data",
+   "label": "Partner Order Ref"
+  },
+  {
+   "fieldname": "invoice_url",
+   "fieldtype": "Data",
+   "label": "Invoice URL"
+  },
+  {
+   "fieldname": "ordered_date",
+   "fieldtype": "Datetime",
+   "label": "Ordered Date"
+  },
+  {
+   "fieldname": "delivery_address",
+   "fieldtype": "Text",
+   "label": "Delivery Address"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "Pending\nPaid\nRefunded"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  }
+ ],
+ "icon": "fa fa-shopping-cart",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Marketplace Order",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

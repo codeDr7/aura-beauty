@@ -1,0 +1,109 @@
+{
+ "autoname": "format:LIFE-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "assessment_date",
+  "sleep_quality",
+  "water_intake",
+  "activity_level",
+  "stress_level",
+  "sun_exposure",
+  "overall_score"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "Beauty User Profile",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "assessment_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Assessment Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sleep_quality",
+   "fieldtype": "Select",
+   "label": "Sleep Quality",
+   "options": "Poor\nFair\nGood\nExcellent"
+  },
+  {
+   "fieldname": "water_intake",
+   "fieldtype": "Select",
+   "label": "Water Intake",
+   "options": "Low\nMedium\nHigh"
+  },
+  {
+   "fieldname": "activity_level",
+   "fieldtype": "Select",
+   "label": "Activity Level",
+   "options": "Sedentary\nLight\nModerate\nActive"
+  },
+  {
+   "fieldname": "stress_level",
+   "fieldtype": "Select",
+   "label": "Stress Level",
+   "options": "Low\nMedium\nHigh"
+  },
+  {
+   "fieldname": "sun_exposure",
+   "fieldtype": "Select",
+   "label": "Sun Exposure",
+   "options": "Minimal\nModerate\nFrequent"
+  },
+  {
+   "fieldname": "overall_score",
+   "fieldtype": "Float",
+   "label": "Overall Score",
+   "min": 0,
+   "max": 100
+  }
+ ],
+ "icon": "fa fa-heartbeat",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Lifestyle Assessment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
