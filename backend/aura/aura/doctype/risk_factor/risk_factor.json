@@ -1,0 +1,65 @@
+{
+ "autoname": "format:RF-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "risk_name",
+  "severity",
+  "detected_date",
+  "resolved_date",
+  "status",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "risk_name",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Risk",
+   "options": "Chronic Dehydration\nSevere Sensitivity\nHormonal Acne\nSeasonal Allergies\nSun Damage Accumulation\nStress-Related Hair Loss\nNutritional Deficiency\nHormonal Imbalance\nSkin Barrier Damage\nChronic Inflammation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Severity",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "detected_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Detected Date"
+  },
+  {
+   "fieldname": "resolved_date",
+   "fieldtype": "Date",
+   "label": "Resolved Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nMonitoring\nResolved"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Risk Factor",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

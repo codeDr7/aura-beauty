@@ -1,0 +1,64 @@
+{
+ "autoname": "format:BG-{####}",
+ "creation": "2025-01-01 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "goal_name",
+  "priority",
+  "target_date",
+  "status",
+  "progress_percent",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "goal_name",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Goal",
+   "options": "Improve Hydration\nReduce Pigmentation\nClear Acne\nReduce Aging Signs\nStrengthen Hair\nReduce Hair Fall\nImprove Scalp Health\nBuild Routine Consistency\nImprove Sleep\nReduce Stress\nBetter Nutrition\nSun Protection\nProfessional Consultation\nCustom",
+   "reqd": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nUrgent"
+  },
+  {
+   "fieldname": "target_date",
+   "fieldtype": "Date",
+   "label": "Target Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Not Started\nIn Progress\nOn Track\nAt Risk\nCompleted\nAbandoned"
+  },
+  {
+   "fieldname": "progress_percent",
+   "fieldtype": "Percent",
+   "label": "Progress"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "istable": 1,
+ "modified": "2025-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Aura",
+ "name": "Beauty Goal",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 0
+}

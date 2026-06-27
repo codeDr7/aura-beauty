@@ -5,23 +5,80 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "personal_section",
   "user",
   "full_name",
   "age_range",
   "gender",
   "country",
+  "date_of_birth",
+  "column_break_personal",
   "climate",
+  "season",
+  "uv_index",
+  "humidity",
+  "pollution_level",
+  "subscription_status",
+  "section_skin_intelligence",
   "skin_type",
   "skin_sensitivity",
+  "hydration_level",
+  "hydration_trend",
+  "barrier_health",
+  "barrier_health_trend",
+  "column_break_skin",
+  "pigmentation_score",
+  "pigmentation_trend",
+  "acne_score",
+  "acne_trend",
+  "aging_score",
+  "aging_trend",
+  "section_hair_intelligence",
   "hair_type",
+  "hair_density",
+  "hair_damage_level",
+  "hair_damage_trend",
+  "column_break_hair",
+  "scalp_condition",
+  "scalp_condition_trend",
+  "hair_porosity",
+  "section_lifestyle_intelligence",
+  "sleep_quality",
+  "stress_level",
+  "diet_quality",
+  "water_intake",
+  "column_break_lifestyle",
+  "exercise_frequency",
+  "sun_exposure_level",
+  "screen_time_hours",
+  "section_scores",
   "skin_score",
   "hair_score",
+  "overall_beauty_score",
+  "column_break_scores",
+  "routine_consistency_score",
+  "improvement_rate",
+  "confidence_score",
+  "section_goals",
+  "goals",
+  "section_risks",
+  "risk_factors",
+  "section_sensitivities",
+  "sensitive_ingredients",
+  "section_history",
+  "profile_snapshots",
+  "section_status",
   "onboarding_completed",
-  "subscription_status",
-  "created_date",
-  "last_assessment_date"
+  "last_active_date",
+  "last_assessment_date",
+  "profile_version"
  ],
  "fields": [
+  {
+   "fieldname": "personal_section",
+   "fieldtype": "Section Break",
+   "label": "Personal Information"
+  },
   {
    "fieldname": "user",
    "fieldtype": "Link",
@@ -58,10 +115,55 @@
    "label": "Country"
   },
   {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "column_break_personal",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "climate",
    "fieldtype": "Select",
    "label": "Climate",
-   "options": "Tropical\nDry\nTemperate\nContinental\nPolar"
+   "options": "Tropical\nDry\nTemperate\nContinental\nPolar\nMediterranean\nMountain\nCoastal"
+  },
+  {
+   "fieldname": "season",
+   "fieldtype": "Select",
+   "label": "Current Season",
+   "options": "Spring\nSummer\nAutumn\nWinter"
+  },
+  {
+   "fieldname": "uv_index",
+   "fieldtype": "Float",
+   "label": "UV Index",
+   "min": 0,
+   "max": 11
+  },
+  {
+   "fieldname": "humidity",
+   "fieldtype": "Percent",
+   "label": "Humidity"
+  },
+  {
+   "fieldname": "pollution_level",
+   "fieldtype": "Select",
+   "label": "Pollution Level",
+   "options": "Low\nModerate\nHigh\nVery High"
+  },
+  {
+   "default": "Free",
+   "fieldname": "subscription_status",
+   "fieldtype": "Select",
+   "label": "Subscription Status",
+   "options": "Free\nAura Plus\nAura Premium"
+  },
+  {
+   "fieldname": "section_skin_intelligence",
+   "fieldtype": "Section Break",
+   "label": "Skin Intelligence"
   },
   {
    "fieldname": "skin_type",
@@ -74,13 +176,174 @@
    "fieldname": "skin_sensitivity",
    "fieldtype": "Select",
    "label": "Skin Sensitivity",
-   "options": "Low\nMedium\nHigh"
+   "options": "Low\nMedium\nHigh\nVery High"
+  },
+  {
+   "fieldname": "hydration_level",
+   "fieldtype": "Percent",
+   "label": "Hydration Level"
+  },
+  {
+   "fieldname": "hydration_trend",
+   "fieldtype": "Select",
+   "label": "Hydration Trend",
+   "options": "Improving\nStable\nWorsening\nUnknown"
+  },
+  {
+   "fieldname": "barrier_health",
+   "fieldtype": "Percent",
+   "label": "Barrier Health"
+  },
+  {
+   "fieldname": "barrier_health_trend",
+   "fieldtype": "Select",
+   "label": "Barrier Health Trend",
+   "options": "Improving\nStable\nWorsening\nUnknown"
+  },
+  {
+   "fieldname": "column_break_skin",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pigmentation_score",
+   "fieldtype": "Percent",
+   "label": "Pigmentation Score",
+   "description": "Lower is better (0 = clear, 100 = severe)"
+  },
+  {
+   "fieldname": "pigmentation_trend",
+   "fieldtype": "Select",
+   "label": "Pigmentation Trend",
+   "options": "Improving\nStable\nWorsening\nUnknown"
+  },
+  {
+   "fieldname": "acne_score",
+   "fieldtype": "Percent",
+   "label": "Acne Score",
+   "description": "Lower is better (0 = clear, 100 = severe)"
+  },
+  {
+   "fieldname": "acne_trend",
+   "fieldtype": "Select",
+   "label": "Acne Trend",
+   "options": "Improving\nStable\nWorsening\nUnknown"
+  },
+  {
+   "fieldname": "aging_score",
+   "fieldtype": "Percent",
+   "label": "Aging Score",
+   "description": "Lower is better"
+  },
+  {
+   "fieldname": "aging_trend",
+   "fieldtype": "Select",
+   "label": "Aging Trend",
+   "options": "Improving\nStable\nWorsening\nUnknown"
+  },
+  {
+   "fieldname": "section_hair_intelligence",
+   "fieldtype": "Section Break",
+   "label": "Hair Intelligence"
   },
   {
    "fieldname": "hair_type",
    "fieldtype": "Select",
    "label": "Hair Type",
    "options": "Straight\nWavy\nCurly\nCoily"
+  },
+  {
+   "fieldname": "hair_density",
+   "fieldtype": "Select",
+   "label": "Hair Density",
+   "options": "Low\nMedium\nHigh"
+  },
+  {
+   "fieldname": "hair_damage_level",
+   "fieldtype": "Percent",
+   "label": "Hair Damage Level",
+   "description": "0 = none, 100 = severely damaged"
+  },
+  {
+   "fieldname": "hair_damage_trend",
+   "fieldtype": "Select",
+   "label": "Hair Damage Trend",
+   "options": "Improving\nStable\nWorsening\nUnknown"
+  },
+  {
+   "fieldname": "column_break_hair",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "scalp_condition",
+   "fieldtype": "Select",
+   "label": "Scalp Condition",
+   "options": "Healthy\nDry\nOily\nFlaky\nIrritated\nUnknown"
+  },
+  {
+   "fieldname": "scalp_condition_trend",
+   "fieldtype": "Select",
+   "label": "Scalp Condition Trend",
+   "options": "Improving\nStable\nWorsening\nUnknown"
+  },
+  {
+   "fieldname": "hair_porosity",
+   "fieldtype": "Select",
+   "label": "Hair Porosity",
+   "options": "Low\nMedium\nHigh"
+  },
+  {
+   "fieldname": "section_lifestyle_intelligence",
+   "fieldtype": "Section Break",
+   "label": "Lifestyle Intelligence"
+  },
+  {
+   "fieldname": "sleep_quality",
+   "fieldtype": "Select",
+   "label": "Sleep Quality",
+   "options": "Poor\nFair\nGood\nExcellent"
+  },
+  {
+   "fieldname": "stress_level",
+   "fieldtype": "Select",
+   "label": "Stress Level",
+   "options": "Low\nModerate\nHigh\nVery High"
+  },
+  {
+   "fieldname": "diet_quality",
+   "fieldtype": "Select",
+   "label": "Diet Quality",
+   "options": "Poor\nFair\nGood\nExcellent"
+  },
+  {
+   "fieldname": "water_intake",
+   "fieldtype": "Float",
+   "label": "Daily Water Intake (glasses)"
+  },
+  {
+   "fieldname": "column_break_lifestyle",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "exercise_frequency",
+   "fieldtype": "Select",
+   "label": "Exercise Frequency",
+   "options": "Rarely\n1-2 per week\n3-4 per week\n5+ per week"
+  },
+  {
+   "fieldname": "sun_exposure_level",
+   "fieldtype": "Select",
+   "label": "Sun Exposure Level",
+   "options": "Minimal\nModerate\nFrequent\nExtended"
+  },
+  {
+   "fieldname": "screen_time_hours",
+   "fieldtype": "Float",
+   "label": "Daily Screen Time (hours)"
+  },
+  {
+   "fieldname": "section_scores",
+   "fieldtype": "Section Break",
+   "label": "Scores"
   },
   {
    "fieldname": "skin_score",
@@ -97,27 +360,105 @@
    "max": 100
   },
   {
+   "fieldname": "overall_beauty_score",
+   "fieldtype": "Float",
+   "label": "Overall Beauty Score",
+   "min": 0,
+   "max": 100
+  },
+  {
+   "fieldname": "column_break_scores",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "routine_consistency_score",
+   "fieldtype": "Percent",
+   "label": "Routine Consistency Score"
+  },
+  {
+   "fieldname": "improvement_rate",
+   "fieldtype": "Float",
+   "label": "Improvement Rate",
+   "description": "Positive = improving, negative = declining"
+  },
+  {
+   "fieldname": "confidence_score",
+   "fieldtype": "Percent",
+   "label": "Profile Confidence Score",
+   "description": "How confident we are in this profile (more data = higher)"
+  },
+  {
+   "fieldname": "section_goals",
+   "fieldtype": "Section Break",
+   "label": "Beauty Goals"
+  },
+  {
+   "fieldname": "goals",
+   "fieldtype": "Table",
+   "label": "Beauty Goals",
+   "options": "Beauty Goal",
+   "reqd": 0
+  },
+  {
+   "fieldname": "section_risks",
+   "fieldtype": "Section Break",
+   "label": "Risk Factors"
+  },
+  {
+   "fieldname": "risk_factors",
+   "fieldtype": "Table",
+   "label": "Risk Factors",
+   "options": "Risk Factor"
+  },
+  {
+   "fieldname": "section_sensitivities",
+   "fieldtype": "Section Break",
+   "label": "Sensitivities"
+  },
+  {
+   "fieldname": "sensitive_ingredients",
+   "fieldtype": "Table",
+   "label": "Sensitive Ingredients",
+   "options": "Sensitive Ingredient"
+  },
+  {
+   "fieldname": "section_history",
+   "fieldtype": "Section Break",
+   "label": "Profile History"
+  },
+  {
+   "fieldname": "profile_snapshots",
+   "fieldtype": "Table",
+   "label": "Profile Snapshots",
+   "options": "Profile Snapshot"
+  },
+  {
+   "fieldname": "section_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
    "default": "0",
    "fieldname": "onboarding_completed",
    "fieldtype": "Check",
    "label": "Onboarding Completed"
   },
   {
-   "default": "Free",
-   "fieldname": "subscription_status",
-   "fieldtype": "Select",
-   "label": "Subscription Status",
-   "options": "Free\nAura Plus\nAura Premium"
-  },
-  {
-   "fieldname": "created_date",
-   "fieldtype": "Date",
-   "label": "Created Date"
+   "fieldname": "last_active_date",
+   "fieldtype": "Datetime",
+   "label": "Last Active Date"
   },
   {
    "fieldname": "last_assessment_date",
    "fieldtype": "Date",
    "label": "Last Assessment Date"
+  },
+  {
+   "default": "1",
+   "fieldname": "profile_version",
+   "fieldtype": "Int",
+   "label": "Profile Version",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-user",
