@@ -1,6 +1,5 @@
 import frappe
 from frappe.utils import now_datetime, today
-from datetime import datetime, timedelta
 
 
 def get_profile(user=None):
@@ -62,9 +61,9 @@ def _handle_routine_complete(profile, payload):
     profile.routine_consistency_score = min(100, consistency + (2 * steps_completed))
 
     # Small score improvements for consistency
-    skin_boost = 0.5 * steps_completed
-    profile.skin_score = min(100, (profile.skin_score or 50) + skin_boost)
-    profile.hair_score = min(100, (profile.hair_score or 50) + skin_boost)
+    boost = 0.5 * steps_completed
+    profile.skin_score = min(100, (profile.skin_score or 50) + boost)
+    profile.hair_score = min(100, (profile.hair_score or 50) + boost)
 
     _record_snapshot_with_reason(profile, "routine_consistency_score", consistency, profile.routine_consistency_score, "Routine Complete")
 
@@ -186,6 +185,11 @@ def _handle_assessment_complete(profile, payload):
 
 # --- Helpers ---
 
+def _handle_profile_updated(profile, payload):
+    """Profile fields updated → confidence boost, triggers recalculation."""
+    _adjust_percent(profile, "confidence_score", 2)
+
+
 PROFILE_ACTIONS = {
     "diary_entry": _handle_diary_entry,
     "routine_complete": _handle_routine_complete,
@@ -194,6 +198,7 @@ PROFILE_ACTIONS = {
     "product_usage": _handle_product_usage,
     "ai_coach": _handle_ai_coach,
     "assessment_complete": _handle_assessment_complete,
+    "profile_updated": _handle_profile_updated,
 }
 
 

@@ -71,6 +71,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
     _PartnerOrder(id: 'ORD-005', customer: 'Mia T.', product: 'SPF 50', quantity: 2, status: 'Pending', date: 'Jun 20'),
   ];
 
+  bool _downloading = false;
   bool _bulkImporting = false;
   String? _bulkImportResult;
   bool _bulkImportSuccess = false;
@@ -204,7 +205,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
                     child: DropdownButton<String>(
                       value: _selectedBrand,
                       items: _brands.map((b) => DropdownMenuItem(value: b, child: Text(b, style: AppTypography.caption.copyWith(color: AppColors.softCharcoal)))).toList(),
-                      onChanged: (v) => setState(() => _selectedBrand = v!),
+                      onChanged: (v) => setState(() => _selectedBrand = v ?? _selectedBrand),
                       isDense: true,
                     ),
                   ),
@@ -345,7 +346,12 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
           ),
           ...List.generate(_orders.length, (i) {
             final order = _orders[i];
-            return _PartnerOrderCard(order: order);
+            return _PartnerOrderCard(
+              order: order,
+              onStatusChanged: (newStatus) {
+                setState(() => order.status = newStatus);
+              },
+            );
           }),
         ],
       ),
@@ -440,7 +446,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
                 value: _integrationType,
                 isExpanded: true,
                 items: _integrationTypes.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
-                onChanged: (v) => setState(() => _integrationType = v!),
+                onChanged: (v) => setState(() => _integrationType = v ?? _integrationType),
               ),
             ),
           ),
@@ -448,6 +454,10 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
           AuraButton(
             label: 'Submit Registration',
             onPressed: () {
+              if (_companyNameController.text.trim().isEmpty ||
+                  _emailController.text.trim().isEmpty) {
+                return;
+              }
               setState(() {
                 _isPartnerRegistered = true;
                 _showRegistrationForm = false;
@@ -632,7 +642,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
                   value: _productCategory,
                   isExpanded: true,
                   items: _productCategories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
-                  onChanged: (v) => setState(() => _productCategory = v!),
+                  onChanged: (v) => setState(() => _productCategory = v ?? _productCategory),
                 ),
               ),
             ),
@@ -651,7 +661,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
                   value: _productRoutineStep,
                   isExpanded: true,
                   items: _productRoutineSteps.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                  onChanged: (v) => setState(() => _productRoutineStep = v!),
+                  onChanged: (v) => setState(() => _productRoutineStep = v ?? _productRoutineStep),
                 ),
               ),
             ),
@@ -722,8 +732,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
               children: [
                 Expanded(
                   child: AuraButton(
-                    label: 'Download Template',
-                    onPressed: _downloadTemplate,
+                    label: _downloading ? 'Downloading...' : 'Download Template',
+                    onPressed: _downloading ? null : _downloadTemplate,
                     trailingIcon: Icons.download_rounded,
                     isSecondary: true,
                     isFullWidth: true,
@@ -776,6 +786,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
   }
 
   Future<void> _downloadTemplate() async {
+    if (_downloading) return;
+    setState(() => _downloading = true);
     try {
       final dir = await getTemporaryDirectory();
       final path = '${dir.path}/aura_product_template.xlsx';
@@ -790,10 +802,14 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
       setState(() {
         _bulkImportResult = 'Template downloaded to $path';
         _bulkImportSuccess = true;
+        _downloading = false;
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _bulkImportResult = 'Could not reach server. Creating local template...');
+      setState(() {
+        _bulkImportResult = 'Could not reach server. Creating local template...';
+        _downloading = false;
+      });
       _createSampleTemplateLocally();
     }
   }
@@ -816,7 +832,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
   }
 
   Future<void> _uploadBulkImport() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.platform?.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['csv', 'xlsx'],
     );
@@ -845,7 +861,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen>
       if (!mounted) return;
       final data = response.data as Map<String, dynamic>?;
       if (data != null && data['message'] != null) {
-        final errors = (data['errors'] as List?) ?? [];
+        final rawErrors = data['errors'];
+        final errors = (rawErrors is List) ? rawErrors : [];
         setState(() {
           _bulkImportResult = data['message'].toString();
           _bulkImportSuccess = errors.isEmpty;
@@ -1072,8 +1089,9 @@ class _DashboardStat extends StatelessWidget {
 
 class _PartnerOrderCard extends StatefulWidget {
   final _PartnerOrder order;
+  final ValueChanged<String>? onStatusChanged;
 
-  const _PartnerOrderCard({required this.order});
+  const _PartnerOrderCard({required this.order, this.onStatusChanged});
 
   @override
   State<_PartnerOrderCard> createState() => _PartnerOrderCardState();
@@ -1134,7 +1152,7 @@ class _PartnerOrderCardState extends State<_PartnerOrderCard> {
                         child: DropdownButton<String>(
                           value: widget.order.status,
                           items: _statuses.map((s) => DropdownMenuItem(value: s, child: Text(s, style: AppTypography.caption.copyWith(fontSize: 11)))).toList(),
-                          onChanged: (v) => setState(() => widget.order.status = v!),
+                          onChanged: (v) => widget.onStatusChanged?.call(v ?? widget.order.status),
                           isDense: true,
                         ),
                       ),

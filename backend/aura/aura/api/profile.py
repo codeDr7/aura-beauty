@@ -186,4 +186,4 @@ def get_hair_score():
 
 
 def on_profile_update(doc, method):
-    profile_update_handler.record_action(doc.name, "profile_updated")
+    profile_update_handler.record_action("profile_updated", {"profile": doc.name})

@@ -1,5 +1,4 @@
 import frappe
-import secrets
 import json
 from frappe import _
 
@@ -139,7 +138,12 @@ def partner_create_product(data):
     if not data.get("product_name") or not data.get("brand"):
         frappe.throw(_("Product name and brand are required"))
 
-    if data.get("price") is not None and float(data.get("price")) < 0:
+    try:
+        price = float(data.get("price") or 0)
+    except (ValueError, TypeError):
+        frappe.throw(_("Invalid price value"))
+
+    if price < 0:
         frappe.throw(_("Price must be non-negative"))
 
     existing = frappe.db.exists("Beauty Product", {"product_name": data["product_name"]})
@@ -154,7 +158,7 @@ def partner_create_product(data):
         "brand": data.get("brand", partner_name),
         "partner": partner,
         "description": data.get("description", ""),
-        "price": data.get("price", 0),
+        "price": price,
         "category": data.get("category", "Skincare"),
         "routine_step": data.get("routine_step"),
         "product_score": data.get("product_score", 0),
@@ -185,15 +189,15 @@ def partner_update_product(product_name, data):
     if isinstance(data, str):
         data = frappe.parse_json(data)
 
-    product_name = frappe.db.get_value(
+    product_docname = frappe.db.get_value(
         "Beauty Product",
         {"product_name": product_name, "partner": partner, "is_active": 1},
         "name"
     )
-    if not product_name:
+    if not product_docname:
         frappe.throw(_("Product not found or not owned by your company"))
 
-    doc = frappe.get_doc("Beauty Product", product_name)
+    doc = frappe.get_doc("Beauty Product", product_docname)
 
     updatable_fields = ["brand", "description", "price", "category", "routine_step", "product_score"]
     for field in updatable_fields:
@@ -218,7 +222,7 @@ def partner_delete_product(product_name):
 
     product_name = frappe.db.get_value(
         "Beauty Product",
-        {"product_name": product_name, "partner": partner},
+        {"product_name": product_name, "partner": partner, "is_active": 1},
         "name"
     )
     if not product_name:
@@ -247,7 +251,6 @@ def partner_bulk_import():
         frappe.throw(_("Could not read uploaded file"))
 
     rows = []
-    headers = ["product_name", "brand", "description", "price", "category", "routine_step"]
 
     if file_path.endswith(".xlsx"):
         try:
@@ -276,12 +279,13 @@ def partner_bulk_import():
     for i, row in enumerate(rows):
         try:
             name = (row.get("product_name") or "").strip()
-            brand = (row.get("brand") or "").strip()
+            brand = (row.get("brand") or partner_name).strip()
 
             if not name or not brand:
                 errors.append(f"Row {i + 2}: Missing product_name or brand")
                 continue
 
+            frappe.db.savepoint(f"bulk_import_row_{i}")
             doc = frappe.get_doc({
                 "doctype": "Beauty Product",
                 "product_name": name,
@@ -297,6 +301,7 @@ def partner_bulk_import():
             doc.insert(ignore_permissions=True)
             created += 1
         except Exception as e:
+            frappe.db.rollback(save_point=f"bulk_import_row_{i}")
             errors.append(f"Row {i + 2}: {str(e)}")
 
     frappe.db.commit()
@@ -436,23 +441,21 @@ def partner_get_api_credentials():
 def place_order(product_id, quantity=1):
     profile = get_current_profile()
 
-    if not frappe.db.exists("Beauty Product", product_id):
-        frappe.throw(_("Product not found"))
-
-    product = frappe.get_doc("Beauty Product", product_id)
-
-    partners = frappe.get_all(
-        "Marketplace Partner",
-        filters={"is_active": 1, "status": "Active"},
-        fields=["name"],
-        limit=1
+    product = frappe.db.get_value(
+        "Beauty Product",
+        {"name": product_id, "is_active": 1},
+        ["name", "price", "partner"],
+        as_dict=True
     )
-    if not partners:
-        frappe.throw(_("No active marketplace partner available"))
+    if not product:
+        frappe.throw(_("Product not found or unavailable"))
+
+    if not product.partner or not frappe.db.get_value("Marketplace Partner", product.partner, "is_active"):
+        frappe.throw(_("Product supplier is not currently available"))
 
     doc = frappe.get_doc({
         "doctype": "Marketplace Order",
-        "partner": partners[0].name,
+        "partner": product.partner,
         "user": profile,
         "order_status": "Pending",
         "payment_status": "Pending",

@@ -31,10 +31,11 @@ def get_products(filters=None):
 
 @frappe.whitelist()
 def get_product(name):
-    if not frappe.db.exists("Beauty Product", name):
+    product = frappe.db.get_value("Beauty Product", {"name": name, "is_active": 1})
+    if not product:
         frappe.throw(_("Product not found"))
 
-    product = frappe.get_doc("Beauty Product", name)
+    product = frappe.get_doc("Beauty Product", product)
     data = product.as_dict()
 
     data["concerns"] = [
