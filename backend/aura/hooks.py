@@ -238,6 +238,8 @@ navigation = [
         "label": _("Reports"),
         "icon": "octicon octicon-report",
         "items": [
+            {"type": "report", "name": "Revenue Overview", "label": _("Revenue Overview")},
+            {"type": "report", "name": "Orders by Partner", "label": _("Orders by Partner")},
             {"type": "report", "name": "User Engagement", "label": _("User Engagement")},
             {"type": "report", "name": "Product Performance", "label": _("Product Performance")},
             {"type": "report", "name": "Assessment Trends", "label": _("Assessment Trends")},

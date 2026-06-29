@@ -7,9 +7,10 @@ def send_progress_summary():
     for profile in profiles:
         try:
             doc = frappe.get_doc("Beauty User Profile", profile.name)
-            if doc.email:
+            email = frappe.db.get_value("User", doc.user, "email")
+            if email:
                 frappe.sendmail(
-                    recipients=[doc.email],
+                    recipients=[email],
                     subject="Your Weekly Aura Progress Summary",
                     template="progress_summary",
                     args={

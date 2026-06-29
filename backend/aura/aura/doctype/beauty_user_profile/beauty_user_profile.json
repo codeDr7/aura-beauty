@@ -6,9 +6,10 @@
  "engine": "InnoDB",
  "field_order": [
   "personal_section",
-  "user",
-  "full_name",
-  "age_range",
+   "user",
+   "created_date",
+   "full_name",
+   "age_range",
   "gender",
   "country",
   "date_of_birth",
@@ -88,13 +89,19 @@
    "reqd": 1,
    "unique": 1
   },
-  {
-   "fieldname": "full_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Full Name",
-   "reqd": 1
-  },
+   {
+    "fieldname": "created_date",
+    "fieldtype": "Date",
+    "label": "Created Date",
+    "read_only": 1
+   },
+   {
+    "fieldname": "full_name",
+    "fieldtype": "Data",
+    "in_list_view": 1,
+    "label": "Full Name",
+    "reqd": 1
+   },
   {
    "fieldname": "age_range",
    "fieldtype": "Select",
