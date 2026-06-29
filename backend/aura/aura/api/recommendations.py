@@ -22,7 +22,7 @@ def get_weighted_product_score(product, profile):
 
     skin_type_match = False
     for st in product_doc.skin_types:
-        if st.goal and st.goal.lower() == (profile.skin_type or "").lower():
+        if st.skin_type and st.skin_type.lower() == (profile.skin_type or "").lower():
             skin_type_match = True
             break
 
@@ -31,7 +31,7 @@ def get_weighted_product_score(product, profile):
 
     hair_type_match = False
     for ht in product_doc.hair_types:
-        if ht.goal and ht.goal.lower() == (profile.hair_type or "").lower():
+        if ht.hair_type and ht.hair_type.lower() == (profile.hair_type or "").lower():
             hair_type_match = True
             break
 
@@ -127,7 +127,10 @@ def get_personalized_routine(user=None):
 
 @frappe.whitelist()
 def generate_recommendations(user=None):
-    profile = get_current_profile()
+    if user:
+        profile = frappe.get_doc("Beauty User Profile", user)
+    else:
+        profile = get_current_profile()
 
     products = get_personalized_products()
     routine = get_personalized_routine()

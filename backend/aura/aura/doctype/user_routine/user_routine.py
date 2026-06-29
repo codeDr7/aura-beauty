@@ -16,10 +16,10 @@ class UserRoutine(Document):
 
     def on_update(self):
         if self.is_active:
-            existing = frappe.db.exists("User Routine", {
+            actives = frappe.get_all("User Routine", {
                 "user": self.user,
                 "is_active": 1,
                 "name": ("!=", self.name)
             })
-            if existing:
-                frappe.db.set_value("User Routine", existing, "is_active", 0)
+            for r in actives:
+                frappe.db.set_value("User Routine", r.name, "is_active", 0)

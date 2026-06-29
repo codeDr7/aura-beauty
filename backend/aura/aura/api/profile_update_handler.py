@@ -80,13 +80,18 @@ def _handle_skin_analysis(profile, payload):
         "aging": ("aging_score", "aging_trend"),
     }
 
+    higher_is_better = ("hydration_level", "barrier_health")
+
     for key, (score_field, trend_field) in field_map.items():
         value = analysis.get(key)
         if value is not None:
             old_score = getattr(profile, score_field, None)
             setattr(profile, score_field, value)
             if old_score is not None:
-                trend = "Improving" if value < old_score else ("Worsening" if value > old_score else "Stable")
+                if score_field in higher_is_better:
+                    trend = "Improving" if value > old_score else ("Worsening" if value < old_score else "Stable")
+                else:
+                    trend = "Improving" if value < old_score else ("Worsening" if value > old_score else "Stable")
                 setattr(profile, trend_field, trend)
 
     # Recalculate overall skin score from components
@@ -134,16 +139,17 @@ def _handle_product_usage(profile, payload):
     rating = payload.get("rating")
     reaction = payload.get("reaction")
 
-    if reaction and int(rating or 3) < 3:
+    rating_val = int(rating) if rating is not None else 3
+    if reaction and rating_val < 3:
         profile.append("sensitive_ingredients", {
             "ingredient_name": payload.get("ingredient", product),
             "reaction_type": reaction,
-            "severity": "Mild" if int(rating or 3) == 2 else "Moderate",
+            "severity": "Mild" if rating_val == 2 else "Moderate",
             "confirmed_date": today(),
             "notes": f"Reaction reported after using {product}",
         })
 
-    if rating and int(rating) >= 4:
+    if rating is not None and rating_val >= 4:
         _adjust_percent(profile, "confidence_score", 2)
 
 

@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils import now_datetime, add_days
+from frappe.utils import now_datetime
 
 
 def send_progress_summary():
@@ -11,8 +11,14 @@ def send_progress_summary():
                 frappe.sendmail(
                     recipients=[doc.email],
                     subject="Your Weekly Aura Progress Summary",
-                    template="weekly_progress_summary",
-                    args={"profile": doc},
+                    template="progress_summary",
+                    args={
+                        "full_name": doc.full_name or doc.user,
+                        "skin_score": doc.skin_score,
+                        "hair_score": doc.hair_score,
+                        "consistency_score": doc.routine_consistency_score,
+                        "profile": doc,
+                    },
                 )
         except Exception:
             frappe.log_error(

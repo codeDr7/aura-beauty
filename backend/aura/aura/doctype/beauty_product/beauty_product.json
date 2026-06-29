@@ -84,30 +84,30 @@
    "fieldtype": "Section Break",
    "label": "Targeting"
   },
-  {
-   "fieldname": "skin_types",
-   "fieldtype": "Table MultiSelect",
-   "label": "Skin Types",
-   "options": "Assessment Goal"
-  },
-  {
-   "fieldname": "hair_types",
-   "fieldtype": "Table MultiSelect",
-   "label": "Hair Types",
-   "options": "Assessment Goal"
-  },
+   {
+    "fieldname": "skin_types",
+    "fieldtype": "Table MultiSelect",
+    "label": "Skin Types",
+    "options": "Product Skin Type"
+   },
+   {
+    "fieldname": "hair_types",
+    "fieldtype": "Table MultiSelect",
+    "label": "Hair Types",
+    "options": "Product Hair Type"
+   },
   {
    "fieldname": "concerns",
    "fieldtype": "Table MultiSelect",
    "label": "Concerns",
    "options": "Product Concern"
   },
-  {
-   "fieldname": "ingredients",
-   "fieldtype": "Table MultiSelect",
-   "label": "Ingredients",
-   "options": "Product Concern"
-  },
+   {
+    "fieldname": "ingredients",
+    "fieldtype": "Table MultiSelect",
+    "label": "Ingredients",
+    "options": "Product Ingredient Link"
+   },
   {
    "fieldname": "section_break_scoring",
    "fieldtype": "Section Break",

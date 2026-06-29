@@ -35,7 +35,8 @@ def submit_skin_assessment(data):
 
     if data.get("main_goals"):
         for goal in data["main_goals"]:
-            doc.append("main_goals", {"goal": goal.get("goal", goal)})
+            goal_text = goal.get("goal") if isinstance(goal, dict) else goal
+            doc.append("main_goals", {"goal": goal_text})
 
     doc.insert(ignore_permissions=True)
     frappe.db.commit()
@@ -68,7 +69,8 @@ def submit_hair_assessment(data):
 
     if data.get("main_goals"):
         for goal in data["main_goals"]:
-            doc.append("main_goals", {"goal": goal.get("goal", goal)})
+            goal_text = goal.get("goal") if isinstance(goal, dict) else goal
+            doc.append("main_goals", {"goal": goal_text})
 
     doc.insert(ignore_permissions=True)
     frappe.db.commit()

@@ -171,7 +171,7 @@ def partner_create_product(data):
 
     if data.get("ingredients"):
         for i in data["ingredients"]:
-            doc.append("ingredients", {"concern": i})
+            doc.append("ingredients", {"ingredient": i})
 
     doc.insert(ignore_permissions=True)
     frappe.db.commit()

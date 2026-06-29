@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-from frappe import __version__ as frappe_version
 
 with open("requirements.txt") as f:
     install_requires = f.read().strip().splitlines()

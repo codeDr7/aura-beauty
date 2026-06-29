@@ -43,7 +43,7 @@ def get_product(name):
         for c in product.concerns
     ]
     data["ingredients"] = [
-        {"concern": i.concern, "ingredient_name": frappe.db.get_value("Product Ingredient", i.concern, "ingredient_name") if i.concern else None}
+        {"ingredient": i.ingredient, "ingredient_name": frappe.db.get_value("Product Ingredient", i.ingredient, "ingredient_name") if i.ingredient else None}
         for i in product.ingredients
     ]
 

@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils import now_datetime, add_days
+from frappe.utils import now_datetime
 
 
 def regenerate_recommendations():
@@ -8,9 +8,8 @@ def regenerate_recommendations():
         try:
             doc = frappe.get_doc("Beauty User Profile", profile.name)
             if doc.latest_skin_assessment:
-                assessment = frappe.get_doc("Skin Assessment", doc.latest_skin_assessment)
                 frappe.get_attr("aura.api.recommendations.generate_recommendations")(
-                    doc.name, assessment
+                    doc.name
                 )
         except Exception:
             frappe.log_error(

@@ -100,7 +100,7 @@ def get_ingredient_conflicts(ingredient):
         LEFT JOIN `tabProduct Ingredient` ib ON ib.name = ic.ingredient_b
         WHERE (ic.ingredient_a = %s OR ic.ingredient_b = %s)
           AND ic.is_active = 1
-        ORDER BY FIELD(ic.severity, 'Critical', 'High', 'Medium', 'Low')
+        ORDER BY CASE ic.severity WHEN 'Critical' THEN 1 WHEN 'High' THEN 2 WHEN 'Medium' THEN 3 WHEN 'Low' THEN 4 END
     """, (ingredient, ingredient), as_dict=True)
 
     return conflicts

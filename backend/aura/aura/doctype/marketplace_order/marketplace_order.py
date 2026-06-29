@@ -6,8 +6,6 @@ class MarketplaceOrder(Document):
     def before_insert(self):
         if not self.ordered_date:
             self.ordered_date = frappe.utils.now()
-        if not self.order_id:
-            self.order_id = self.name
 
     def validate(self):
         total = 0
@@ -18,6 +16,8 @@ class MarketplaceOrder(Document):
         self.total_price = total
 
     def after_insert(self):
+        if not self.order_id:
+            frappe.db.set_value("Marketplace Order", self.name, "order_id", self.name)
         self.send_webhook_to_partner()
 
     def send_webhook_to_partner(self):

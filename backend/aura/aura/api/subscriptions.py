@@ -60,11 +60,11 @@ def get_current_subscription():
 
 
 @frappe.whitelist()
-def upgrade_plan(plan_id, type):
+def upgrade_plan(plan_id, subscription_type):
     if not frappe.db.exists("Subscription Plan", plan_id):
         frappe.throw(_("Plan not found"))
 
-    if type not in ("Monthly", "Yearly"):
+    if subscription_type not in ("Monthly", "Yearly"):
         frappe.throw(_("Invalid subscription type"))
 
     profile = get_current_profile()
@@ -84,13 +84,13 @@ def upgrade_plan(plan_id, type):
         "start_date": frappe.utils.today(),
         "is_active": 1,
         "auto_renew": 1,
-        "subscription_type": type,
+        "subscription_type": subscription_type,
     })
     doc.insert(ignore_permissions=True)
     frappe.db.commit()
 
     return {
-        "message": _(f"Successfully upgraded to {plan.plan_name}"),
+        "message": _("Successfully upgraded to {0}").format(plan.plan_name),
         "subscription": doc.as_dict(),
     }
 

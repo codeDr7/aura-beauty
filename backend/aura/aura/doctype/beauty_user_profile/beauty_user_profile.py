@@ -1,20 +1,27 @@
 import frappe
 from frappe.model.document import Document
-from frappe.utils import now_datetime
+from frappe.utils import now_datetime, today
 
 
 class BeautyUserProfile(Document):
     def before_save(self):
         if not self.created_date:
-            self.created_date = frappe.utils.today()
-        self.full_name = frappe.db.get_value("User", self.user, "full_name") or self.full_name
+            self.created_date = today()
+        self.full_name = self.full_name or frappe.db.get_value("User", self.user, "full_name")
         self.last_active_date = now_datetime()
 
     def validate(self):
+        self._capture_snapshot_olds()
         self._validate_scores()
         self._validate_percent_fields()
         self._validate_trend_fields()
         self._update_goal_statuses()
+
+    def _capture_snapshot_olds(self):
+        if self.is_new():
+            return
+        for field in ("skin_score", "hair_score", "overall_beauty_score"):
+            setattr(self, f"_old_{field}", frappe.db.get_value("Beauty User Profile", self.name, field))
 
     def on_update(self):
         self._auto_snapshot()
@@ -57,12 +64,11 @@ class BeautyUserProfile(Document):
     def _auto_snapshot(self):
         if frappe.flags.in_import or frappe.flags.in_patch:
             return
-        if not self.get("__islocal") and self.has_value_changed("skin_score"):
-            self._record_snapshot("skin_score", frappe.db.get_value("Beauty User Profile", self.name, "skin_score"), self.skin_score, "System")
-        if not self.get("__islocal") and self.has_value_changed("hair_score"):
-            self._record_snapshot("hair_score", frappe.db.get_value("Beauty User Profile", self.name, "hair_score"), self.hair_score, "System")
-        if not self.get("__islocal") and self.has_value_changed("overall_beauty_score"):
-            self._record_snapshot("overall_beauty_score", frappe.db.get_value("Beauty User Profile", self.name, "overall_beauty_score"), self.overall_beauty_score, "System")
+        for field in ("skin_score", "hair_score", "overall_beauty_score"):
+            old_val = getattr(self, f"_old_{field}", None)
+            new_val = self.get(field)
+            if old_val is not None and old_val != new_val:
+                self._record_snapshot(field, old_val, new_val, "System")
 
     def _record_snapshot(self, field_name, old_val, new_val, reason):
         if old_val == new_val:
