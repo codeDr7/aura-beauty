@@ -393,9 +393,8 @@ class ApiClient {
   }
 
   Future<void> clearTokens() async {
-    await _storage.delete(key: ApiConstants.storageKeyAccessToken);
-    await _storage.delete(key: ApiConstants.storageKeyRefreshToken);
     await _storage.delete(key: ApiConstants.storageKeyApiKey);
     await _storage.delete(key: ApiConstants.storageKeyApiSecret);
+    await _storage.delete(key: ApiConstants.storageKeyDeviceId);
   }
 }

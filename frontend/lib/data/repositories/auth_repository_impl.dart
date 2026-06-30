@@ -66,32 +66,32 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   Future<void> _loginAfterRegister(String email, String password) async {
-    try {
-      await _remote.post<dynamic>(ApiConstants.login, data: {'usr': email, 'pwd': password});
-    } catch (_) {}
+    final loginResponse = await _remote.post<dynamic>(
+      ApiConstants.login,
+      data: {'usr': email, 'pwd': password},
+    );
+    if (!loginResponse.isSuccess) {
+      throw ApiException(message: loginResponse.message ?? 'Auto-login after registration failed');
+    }
   }
 
   Future<void> _generateAndStoreApiKeys() async {
-    try {
-      final keyResponse = await _remote.post<Map<String, dynamic>>(
-        ApiConstants.generateKeys,
-        fromJson: (json) => json as Map<String, dynamic>,
-      );
-      if (keyResponse.isSuccess && keyResponse.data != null) {
-        final apiKey = keyResponse.data!['api_key'] as String?;
-        final apiSecret = keyResponse.data!['api_secret'] as String?;
-        if (apiKey != null && apiSecret != null) {
-          await _api.setApiCredentials(apiKey, apiSecret);
-        }
+    final keyResponse = await _remote.post<Map<String, dynamic>>(
+      ApiConstants.generateKeys,
+      fromJson: (json) => json as Map<String, dynamic>,
+    );
+    if (keyResponse.isSuccess && keyResponse.data != null) {
+      final apiKey = keyResponse.data!['api_key'] as String?;
+      final apiSecret = keyResponse.data!['api_secret'] as String?;
+      if (apiKey != null && apiSecret != null) {
+        await _api.setApiCredentials(apiKey, apiSecret);
       }
-    } catch (_) {}
+    }
   }
 
   @override
   Future<void> logout() async {
-    try {
-      await _remote.post(ApiConstants.logout);
-    } catch (_) {}
+    await _remote.post(ApiConstants.logout);
     await _api.clearTokens();
     await _local.delete('user_data');
   }

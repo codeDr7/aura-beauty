@@ -51,6 +51,25 @@ class IngredientRepositoryImpl implements IngredientRepository {
 
   @override
   Future<Map<String, String>> getIngredientDetails(String ingredient) async {
-    throw ApiException(message: 'Not available');
+    final response = await _remote.get<List<dynamic>>(
+      ApiConstants.getIngredients,
+      fromJson: (json) => json as List<dynamic>,
+    );
+    if (response.isSuccess && response.data != null) {
+      final lower = ingredient.toLowerCase();
+      for (final item in response.data!) {
+        final map = item as Map<String, dynamic>;
+        final name = (map['ingredient_name'] as String? ?? '').toLowerCase();
+        if (name == lower || name.contains(lower)) {
+          return {
+            'description': map['description'] as String? ?? '',
+            'benefits': (map['benefits'] as List<dynamic>?)
+                ?.map((e) => e.toString())
+                .join(', ') ?? '',
+          };
+        }
+      }
+    }
+    return {'description': '', 'benefits': ''};
   }
 }

@@ -11,6 +11,23 @@ class SkinAnalysisModel extends SkinAnalysis {
   });
 
   factory SkinAnalysisModel.fromJson(Map<String, dynamic> json) {
+    if (json.containsKey('needs')) {
+      final needs = json['needs'] as List<dynamic>? ?? [];
+      return SkinAnalysisModel(
+        id: json['name'] as String? ?? '',
+        date: DateTime.now(),
+        overallScore: needs.isEmpty ? 0 : 10 - needs.length,
+        metrics: needs.asMap().entries.map((e) => SkinMetricModel(
+          label: (e.value as Map<String, dynamic>)['area'] as String? ?? 'Unknown',
+          score: e.key < 2 ? 5 - e.key : 3,
+          iconName: (e.value as Map<String, dynamic>)['priority'] as String?,
+        )).toList(),
+        summary: json['profile_complete'] == true ? 'Profile complete' : 'Needs assessment',
+        recommendations: needs.map((n) => (n as Map<String, dynamic>)['message'] as String? ?? '')
+            .where((m) => m.isNotEmpty)
+            .toList(),
+      );
+    }
     return SkinAnalysisModel(
       id: json['name'] as String? ?? '',
       date: json['assessment_date'] != null

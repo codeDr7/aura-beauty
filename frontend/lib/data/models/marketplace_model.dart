@@ -6,6 +6,7 @@ class MarketplaceProductModel extends MarketplaceProduct {
     required super.name,
     required super.brand,
     required super.price,
+    super.priceValue,
     super.orders,
     super.imageUrl,
   });
@@ -17,6 +18,7 @@ class MarketplaceProductModel extends MarketplaceProduct {
       name: json['product_name'] as String? ?? '',
       brand: json['brand'] as String? ?? '',
       price: priceNum > 0 ? '\$${priceNum.toStringAsFixed(2)}' : '\$0.00',
+      priceValue: priceNum,
       orders: json['orders'] as int? ?? 0,
       imageUrl: json['image_url'] as String?,
     );
@@ -25,7 +27,7 @@ class MarketplaceProductModel extends MarketplaceProduct {
   Map<String, dynamic> toJson() => {
     'product_name': name,
     'brand': brand,
-    'price': price,
+    'price': priceValue ?? 0.0,
   };
 }
 
@@ -105,5 +107,6 @@ class ApiCredentialsModel extends ApiCredentials {
   Map<String, dynamic> toJson() => {
     'api_key': apiKey,
     'api_secret': apiSecret,
+    'webhook_url': webhookUrl,
   };
 }

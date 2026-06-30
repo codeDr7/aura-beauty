@@ -29,7 +29,7 @@ class ProductModel extends Product {
       imageUrl: json['image_url'] as String?,
       badgeLabel: json['badge_label'] as String?,
       category: json['category'] as String?,
-      rating: json['product_score']?.toInt() as int?,
+      rating: (json['product_score'] as num?)?.toInt(),
       reviewCount: json['review_count'] as int?,
       keyIngredients: (json['ingredients'] as List<dynamic>?)
           ?.map((e) => e as String)

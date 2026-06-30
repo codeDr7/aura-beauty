@@ -5,6 +5,7 @@ class MarketplaceProduct extends Equatable {
   final String name;
   final String brand;
   final String price;
+  final double priceValue;
   final int orders;
   final String? imageUrl;
 
@@ -13,12 +14,13 @@ class MarketplaceProduct extends Equatable {
     required this.name,
     required this.brand,
     required this.price,
+    this.priceValue = 0.0,
     this.orders = 0,
     this.imageUrl,
   });
 
   @override
-  List<Object?> get props => [id, name, brand, price, orders, imageUrl];
+  List<Object?> get props => [id, name, brand, price, priceValue, orders, imageUrl];
 }
 
 class PartnerOrder extends Equatable {

@@ -1,4 +1,5 @@
-﻿import '../../core/constants/api_constants.dart';
+﻿import 'dart:convert';
+import '../../core/constants/api_constants.dart';
 import '../../domain/entities/community.dart';
 import '../../domain/repositories/community_repository.dart';
 import '../../core/network/api_exceptions.dart';
@@ -27,7 +28,10 @@ class CommunityRepositoryImpl implements CommunityRepository {
 
   @override
   Future<CommunityPost> getPostById(String id) async {
-    throw ApiException(message: 'Not available');
+    final feed = await getFeed(page: 1, limit: 100);
+    final match = feed.where((p) => p.id == id).toList();
+    if (match.isNotEmpty) return match.first;
+    throw ApiException(message: 'Post not found');
   }
 
   @override
@@ -50,12 +54,26 @@ class CommunityRepositoryImpl implements CommunityRepository {
 
   @override
   Future<void> unlikePost(String postId) async {
-    throw ApiException(message: 'Unlike not available, use toggle');
+    await likePost(postId);
   }
 
   @override
   Future<List<Comment>> getComments(String postId) async {
-    throw ApiException(message: 'Not available');
+    final response = await _remote.get<Map<String, dynamic>>(
+      '/api/resource/Community Comment',
+      queryParameters: {
+        'filters': jsonEncode({'post': postId}),
+        'limit': 100,
+      },
+      fromJson: (json) => json as Map<String, dynamic>,
+    );
+    if (response.isSuccess && response.data != null) {
+      final list = response.data!['data'] as List<dynamic>? ?? [];
+      return list
+          .map((e) => CommentModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    throw ApiException(message: response.message ?? 'Failed to load comments');
   }
 
   @override
@@ -87,36 +105,39 @@ class CommunityRepositoryImpl implements CommunityRepository {
 
   @override
   Future<CommunityGroup> getGroupById(String id) async {
-    throw ApiException(message: 'Not available');
+    final groups = await getGroups();
+    final match = groups.where((g) => g.id == id).toList();
+    if (match.isNotEmpty) return match.first;
+    throw ApiException(message: 'Group not found');
   }
 
   @override
   Future<void> joinGroup(String groupId) async {
-    throw ApiException(message: 'Not available');
+    throw ApiException(message: 'Group join not available on backend');
   }
 
   @override
   Future<void> leaveGroup(String groupId) async {
-    throw ApiException(message: 'Not available');
+    throw ApiException(message: 'Group leave not available on backend');
   }
 
   @override
   Future<List<Challenge>> getChallenges() async {
-    throw ApiException(message: 'Not available');
+    throw ApiException(message: 'Challenges not available on backend');
   }
 
   @override
   Future<Challenge> getChallengeById(String id) async {
-    throw ApiException(message: 'Not available');
+    throw ApiException(message: 'Challenges not available on backend');
   }
 
   @override
   Future<void> joinChallenge(String challengeId) async {
-    throw ApiException(message: 'Not available');
+    throw ApiException(message: 'Challenges not available on backend');
   }
 
   @override
   Future<double> getChallengeProgress(String challengeId) async {
-    throw ApiException(message: 'Not available');
+    throw ApiException(message: 'Challenges not available on backend');
   }
 }

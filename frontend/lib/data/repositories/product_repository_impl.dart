@@ -13,20 +13,16 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<List<Product>> getProducts({String? category, String? brand}) async {
-    final filters = <String, dynamic>{};
-    if (category != null && category != 'All') filters['category'] = category;
-    final params = <String, dynamic>{};
-    if (filters.isNotEmpty) params['filters'] = jsonEncode(filters);
-    final response = await _remote.get<Map<String, dynamic>>(
+    final filterMap = <String, dynamic>{};
+    if (category != null && category != 'All') filterMap['category'] = category;
+    final queryParams = filterMap.isNotEmpty ? {'filters': jsonEncode(filterMap)} : null;
+    final response = await _remote.get<List<dynamic>>(
       ApiConstants.getProducts,
-      queryParameters: params.isNotEmpty ? params : null,
-      fromJson: (json) => json as Map<String, dynamic>,
+      queryParameters: queryParams,
+      fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
-      final list = response.data!['products'] as List<dynamic>? ??
-          response.data!['message'] as List<dynamic>? ??
-          [];
-      return list
+      return response.data!
           .map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
           .toList();
     }
@@ -79,7 +75,8 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<List<String>> getCategories() async {
     final response = await _remote.get<Map<String, dynamic>>(
-      '${ApiConstants.beautyProduct}?fields=["category"]',
+      ApiConstants.beautyProduct,
+      queryParameters: {'fields': '["category"]'},
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {

@@ -26,14 +26,32 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
   @override
   Future<SubscriptionPlan> getCurrentSubscription() async {
-    final response = await _remote.get<List<dynamic>>(
+    final profile = await _remote.get<Map<String, dynamic>>(
+      ApiConstants.getProfile,
+      fromJson: (json) => json as Map<String, dynamic>,
+    );
+    final status = profile.data?['subscription_status'] as String? ?? 'Free';
+    if (status == 'Free' || status == 'None') {
+      return SubscriptionPlanModel(
+        id: 'free',
+        name: 'Free',
+        monthlyPrice: 0,
+        annualPrice: 0,
+        description: '',
+        features: [],
+      );
+    }
+    final plans = await _remote.get<List<dynamic>>(
       ApiConstants.getPlans,
       fromJson: (json) => json as List<dynamic>,
     );
-    if (response.isSuccess && response.data != null && response.data!.isNotEmpty) {
-      return SubscriptionPlanModel.fromJson(
-        response.data!.first as Map<String, dynamic>,
-      );
+    if (plans.isSuccess && plans.data != null) {
+      for (final p in plans.data!) {
+        final plan = p as Map<String, dynamic>;
+        if ((plan['plan_name'] as String?)?.toLowerCase() == status.toLowerCase()) {
+          return SubscriptionPlanModel.fromJson(plan);
+        }
+      }
     }
     throw ApiException(message: 'No subscription found');
   }

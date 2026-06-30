@@ -1,4 +1,5 @@
-﻿import '../../core/constants/api_constants.dart';
+﻿import 'dart:convert';
+import '../../core/constants/api_constants.dart';
 import '../../domain/entities/marketplace.dart';
 import '../../domain/repositories/marketplace_repository.dart';
 import '../../core/network/api_exceptions.dart';
@@ -12,18 +13,15 @@ class MarketplaceRepositoryImpl implements MarketplaceRepository {
 
   @override
   Future<List<MarketplaceProduct>> getProducts({String? brand}) async {
-    final params = <String, dynamic>{};
-    if (brand != null && brand != 'All Brands') params['filters'] = '{"brand":"$brand"}';
-    final response = await _remote.get<Map<String, dynamic>>(
+    final queryParams = <String, dynamic>{};
+    if (brand != null && brand != 'All Brands') queryParams['filters'] = jsonEncode({'brand': brand});
+    final response = await _remote.get<List<dynamic>>(
       ApiConstants.getProducts,
-      queryParameters: params.isNotEmpty ? params : null,
-      fromJson: (json) => json as Map<String, dynamic>,
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
-      final list = response.data!['products'] as List<dynamic>? ??
-          response.data!['message'] as List<dynamic>? ??
-          [];
-      return list
+      return response.data!
           .map((e) => MarketplaceProductModel.fromJson(e as Map<String, dynamic>))
           .toList();
     }

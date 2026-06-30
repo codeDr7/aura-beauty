@@ -15,7 +15,7 @@ class ApiConstants {
   static const String googleLogin = '$apiMethod/aura.api.auth.google_login';
   static const String logout = '$apiMethod/logout';
   static const String generateKeys = '$apiMethod/aura.api.auth.generate_api_keys';
-  static const String refreshToken = '$apiMethod/login';
+  static const String refreshToken = '$apiMethod/aura.api.auth.generate_api_keys';
 
   // Profile
   static const String getProfile = '$apiMethod/aura.api.profile.get_profile';
@@ -78,12 +78,7 @@ class ApiConstants {
   static const String aiCoachHistory = '$apiMethod/aura.api.ai_coach.get_history';
 
   // REST resources
-  static const String concernTag = '$apiResource/Concern Tag';
-  static const String subscriptionPlan = '$apiResource/Aura Subscription Plan';
-  static const String routineTemplate = '$apiResource/Routine Template';
-  static const String achievementBadge = '$apiResource/Achievement Badge';
   static const String beautyProduct = '$apiResource/Beauty Product';
-  static const String communityPost = '$apiResource/Community Post';
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 30);
@@ -91,8 +86,6 @@ class ApiConstants {
   static const Duration sendTimeout = Duration(seconds: 30);
 
   // Storage keys
-  static const String storageKeyAccessToken = 'access_token';
-  static const String storageKeyRefreshToken = 'refresh_token';
   static const String storageKeyUserId = 'user_id';
   static const String storageKeyUserData = 'user_data';
   static const String storageKeyOnboardingComplete = 'onboarding_complete';

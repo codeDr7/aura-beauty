@@ -12,8 +12,9 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
 
   @override
   Future<SkinAnalysis> analyzeSkin({String? imagePath}) async {
-    final response = await _remote.get<Map<String, dynamic>>(
+    final response = await _remote.post<Map<String, dynamic>>(
       ApiConstants.analyzeNeeds,
+      data: imagePath != null ? {'image_path': imagePath} : {},
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -24,11 +25,23 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
 
   @override
   Future<List<SkinAnalysis>> getAnalysisHistory() async {
-    throw ApiException(message: 'Not available');
+    final response = await _remote.get<List<dynamic>>(
+      ApiConstants.getAssessmentHistory,
+      fromJson: (json) => json as List<dynamic>,
+    );
+    if (response.isSuccess && response.data != null) {
+      return response.data!
+          .map((e) => SkinAnalysisModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    throw ApiException(message: response.message ?? 'Failed to load assessment history');
   }
 
   @override
   Future<SkinAnalysis> getAnalysisById(String id) async {
-    throw ApiException(message: 'Not available');
+    final history = await getAnalysisHistory();
+    final match = history.where((a) => a.id == id).toList();
+    if (match.isNotEmpty) return match.first;
+    throw ApiException(message: 'Analysis not found');
   }
 }

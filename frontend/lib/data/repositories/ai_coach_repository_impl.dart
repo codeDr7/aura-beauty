@@ -31,7 +31,7 @@ class AiCoachRepositoryImpl implements AiCoachRepository {
     );
     if (response.isSuccess && response.data != null) {
       return response.data!
-          .map((e) => ChatMessageModel.fromJson(e as Map<String, dynamic>))
+          .expand((e) => ChatMessageModel.fromHistoryEntry(e as Map<String, dynamic>))
           .toList();
     }
     throw ApiException(message: response.message ?? 'Failed to load history');
