@@ -18,38 +18,31 @@ class ProductModel extends Product {
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
+    final priceNum = (json['price'] as num?)?.toDouble() ?? 0.0;
     return ProductModel(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      id: json['name'] as String? ?? '',
+      name: json['product_name'] as String? ?? '',
       brand: json['brand'] as String? ?? '',
-      subtitle: json['subtitle'] as String?,
-      price: json['price'] as String? ?? '\$0.00',
-      priceValue: (json['price_value'] as num?)?.toDouble() ?? 0.0,
+      subtitle: json['description'] as String?,
+      price: priceNum > 0 ? '\$${priceNum.toStringAsFixed(2)}' : '\$0.00',
+      priceValue: priceNum,
       imageUrl: json['image_url'] as String?,
       badgeLabel: json['badge_label'] as String?,
       category: json['category'] as String?,
-      rating: json['rating'] as int?,
+      rating: json['product_score']?.toInt() as int?,
       reviewCount: json['review_count'] as int?,
-      keyIngredients: (json['key_ingredients'] as List<dynamic>?)
+      keyIngredients: (json['ingredients'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      isRecommended: json['is_recommended'] as bool? ?? false,
+      isRecommended: json['is_featured'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
+    'product_name': name,
     'brand': brand,
-    'subtitle': subtitle,
-    'price': price,
-    'price_value': priceValue,
-    'image_url': imageUrl,
-    'badge_label': badgeLabel,
+    'price': priceValue,
     'category': category,
-    'rating': rating,
-    'review_count': reviewCount,
-    'key_ingredients': keyIngredients,
-    'is_recommended': isRecommended,
+    'ingredients': keyIngredients,
   };
 }

@@ -12,25 +12,21 @@ class RoutineModel extends Routine {
 
   factory RoutineModel.fromJson(Map<String, dynamic> json) {
     return RoutineModel(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      id: json['name'] as String? ?? '',
+      name: json['routine_template'] as String? ?? '',
       type: json['type'] as String? ?? '',
       steps: (json['steps'] as List<dynamic>?)
               ?.map((s) => RoutineStepModel.fromJson(s as Map<String, dynamic>))
               .toList() ??
           [],
-      progress: (json['progress'] as num?)?.toDouble() ?? 0.0,
+      progress: (json['progress_percent'] as num?)?.toDouble() ?? 0.0,
       streak: json['streak'] as int? ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'type': type,
+    'routine_template': name,
     'steps': (steps as List<RoutineStepModel>).map((s) => s.toJson()).toList(),
-    'progress': progress,
-    'streak': streak,
   };
 }
 
@@ -47,23 +43,21 @@ class RoutineStepModel extends RoutineStep {
 
   factory RoutineStepModel.fromJson(Map<String, dynamic> json) {
     return RoutineStepModel(
-      id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? '',
+      id: json['step_name'] as String? ?? '',
+      title: json['step_name'] as String? ?? '',
       product: json['product'] as String? ?? '',
       productId: json['product_id'] as String? ?? '',
-      durationSeconds: json['duration_seconds'] as int? ?? 60,
+      durationSeconds: (json['duration_minutes'] as int? ?? 2) * 60,
       isCompleted: json['is_completed'] as bool? ?? false,
-      order: json['order'] as int? ?? 0,
+      order: json['step_number'] as int? ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
+    'step_name': title,
     'product': product,
-    'product_id': productId,
-    'duration_seconds': durationSeconds,
+    'duration_minutes': durationSeconds ~/ 60,
     'is_completed': isCompleted,
-    'order': order,
+    'step_number': order,
   };
 }

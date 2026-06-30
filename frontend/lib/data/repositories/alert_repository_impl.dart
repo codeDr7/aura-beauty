@@ -12,31 +12,17 @@ class AlertRepositoryImpl implements AlertRepository {
 
   @override
   Future<List<PriceAlert>> getAlerts() async {
-    final response = await _remote.get<List<dynamic>>(
-      '${ApiConstants.notifications}/price-alerts',
-      fromJson: (json) => json as List<dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return response.data!
-          .map((e) => PriceAlertModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-    }
-    throw ApiException(message: response.message ?? 'Failed to load alerts');
+    throw ApiException(message: 'Not available');
   }
 
   @override
   Future<PriceAlert> createAlert(PriceAlert alert) async {
     final response = await _remote.post<Map<String, dynamic>>(
-      '${ApiConstants.notifications}/price-alerts',
-      data: PriceAlertModel(
-        id: alert.id,
-        productName: alert.productName,
-        brand: alert.brand,
-        currentPrice: alert.currentPrice,
-        targetPrice: alert.targetPrice,
-        originalPrice: alert.originalPrice,
-        isActive: alert.isActive,
-      ).toJson(),
+      ApiConstants.setPriceAlert,
+      data: {
+        'product': alert.productName,
+        'target_price': alert.targetPrice,
+      },
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -47,15 +33,11 @@ class AlertRepositoryImpl implements AlertRepository {
 
   @override
   Future<void> toggleAlert(String id, bool isActive) async {
-    await _remote.put(
-      '${ApiConstants.notifications}/price-alerts/$id',
-      data: {'is_active': isActive},
-    );
+    throw ApiException(message: 'Not available');
   }
 
   @override
   Future<void> deleteAlert(String id) async {
-    await _remote.delete('${ApiConstants.notifications}/price-alerts/$id');
+    throw ApiException(message: 'Not available');
   }
 }
-

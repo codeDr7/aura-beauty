@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/api_constants.dart';
@@ -19,6 +21,8 @@ class ApiClient {
         headers: {
           ApiConstants.headerContentType: ApiConstants.contentTypeJson,
           ApiConstants.headerAcceptLanguage: 'en',
+          ApiConstants.headerHost: ApiConstants.hostHeader,
+          ApiConstants.headerXAppVersion: ApiConstants.appVersion,
         },
       ),
     );
@@ -43,21 +47,19 @@ class ApiClient {
   InterceptorsWrapper _authInterceptor() {
     return InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final token = await _storage.read(
-          key: ApiConstants.storageKeyAccessToken,
-        );
-        if (token != null && token.isNotEmpty) {
-          options.headers[ApiConstants.headerAuthorization] = 'Bearer $token';
+        final apiKey = await _storage.read(key: ApiConstants.storageKeyApiKey);
+        final apiSecret = await _storage.read(key: ApiConstants.storageKeyApiSecret);
+        if (apiKey != null && apiKey.isNotEmpty && apiSecret != null && apiSecret.isNotEmpty) {
+          options.headers[ApiConstants.headerAuthorization] = 'token $apiKey:$apiSecret';
         }
+
+        options.headers[ApiConstants.headerXDeviceId] = await _ensureDeviceId();
+
         handler.next(options);
       },
       onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
-          final refreshed = await _refreshToken();
-          if (refreshed) {
-            final retryResponse = await _retry(error.requestOptions);
-            return handler.resolve(retryResponse);
-          }
+        if (error.response?.statusCode == 403) {
+          await clearTokens();
         }
         handler.next(error);
       },
@@ -76,6 +78,20 @@ class ApiClient {
         ));
       },
     );
+  }
+
+  String _extractServerMessage(Map<String, dynamic> data) {
+    try {
+      final serverMessages = data['_server_messages'] as String?;
+      if (serverMessages != null && serverMessages.isNotEmpty) {
+        final messages = jsonDecode(serverMessages) as List<dynamic>;
+        if (messages.isNotEmpty) {
+          final firstMsg = jsonDecode(messages.first as String) as Map<String, dynamic>;
+          return firstMsg['message'] as String? ?? '';
+        }
+      }
+    } catch (_) {}
+    return '';
   }
 
   ApiException _parseError(DioException error) {
@@ -98,115 +114,74 @@ class ApiClient {
         final data = error.response?.data;
 
         if (data is Map<String, dynamic>) {
-          final message = data['message'] as String? ??
-              data['error'] as String? ??
-              'An unexpected error occurred.';
-          final errors = data['errors'] as Map<String, List<String>>?;
+          final bodyStatusCode = data['http_status_code'] as int? ?? statusCode;
 
-          switch (statusCode) {
+          String message = _extractServerMessage(data);
+          if (message.isEmpty) {
+            final exc = data['exception'] as String?;
+            if (exc != null && exc.contains(':')) {
+              message = exc.split(':').last.trim();
+            } else {
+              message = exc ?? 'An unexpected error occurred.';
+            }
+          }
+
+          switch (bodyStatusCode) {
             case 400:
-              return ValidationException(
-                message: message,
-                errors: errors,
-                statusCode: statusCode,
-              );
+              return ValidationException(message: message, statusCode: 400);
             case 401:
-              return UnauthorizedException(
-                message: message,
-                statusCode: statusCode,
-              );
+              return UnauthorizedException(message: message, statusCode: 401);
+            case 403:
+              return UnauthorizedException(message: message, statusCode: 403);
             case 404:
-              return NotFoundException(
-                message: message,
-                statusCode: statusCode,
-              );
+              return NotFoundException(message: message, statusCode: 404);
+            case 409:
+              return ValidationException(message: message, statusCode: 409);
             case 422:
-              return ValidationException(
-                message: message,
-                errors: errors,
-                statusCode: statusCode,
-              );
+              return ValidationException(message: message, statusCode: 422);
             case 429:
               return NetworkException(
                 message: 'Too many requests. Please try again later.',
-                statusCode: statusCode,
+                statusCode: 429,
               );
             case >= 500:
-              return ServerException(
-                message: 'Server error. Please try again later.',
-                statusCode: statusCode,
-              );
+              return ServerException(message: 'Server error. Please try again later.', statusCode: bodyStatusCode);
             default:
-              return ApiException(
-                message: message,
-                statusCode: statusCode,
-              );
+              return ApiException(message: message, statusCode: bodyStatusCode);
           }
         }
-        return ApiException(
-          message: 'An unexpected error occurred.',
-          statusCode: statusCode,
-        );
+        return ApiException(message: 'An unexpected error occurred.', statusCode: statusCode);
       case DioExceptionType.cancel:
-        return ApiException(
-          message: 'Request was cancelled.',
-          statusCode: null,
-        );
+        return ApiException(message: 'Request was cancelled.', statusCode: null);
       default:
-        return ApiException(
-          message: 'An unexpected error occurred.',
-          statusCode: null,
-        );
+        return ApiException(message: 'An unexpected error occurred.', statusCode: null);
     }
   }
 
-  Future<bool> _refreshToken() async {
-    try {
-      final refreshToken = await _storage.read(
-        key: ApiConstants.storageKeyRefreshToken,
-      );
-      if (refreshToken == null) return false;
-
-      final response = await Dio().post(
-        '${ApiConstants.baseUrl}${ApiConstants.refreshToken}',
-        data: {'refresh_token': refreshToken},
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data as Map<String, dynamic>;
-        await _storage.write(
-          key: ApiConstants.storageKeyAccessToken,
-          value: data['access_token'] as String,
-        );
-        await _storage.write(
-          key: ApiConstants.storageKeyRefreshToken,
-          value: data['refresh_token'] as String,
-        );
-        return true;
-      }
-      return false;
-    } catch (_) {
-      return false;
+  Future<String> _ensureDeviceId() async {
+    final existing = await _storage.read(key: ApiConstants.storageKeyDeviceId);
+    if (existing != null && existing.isNotEmpty) {
+      return existing;
     }
+    final random = Random();
+    const chars = 'abcdef0123456789';
+    final id = List.generate(32, (_) => chars[random.nextInt(chars.length)]).join();
+    await _storage.write(key: ApiConstants.storageKeyDeviceId, value: id);
+    return id;
   }
 
-  Future<Response> _retry(RequestOptions requestOptions) async {
-    final token = await _storage.read(
-      key: ApiConstants.storageKeyAccessToken,
-    );
-    final options = Options(
-      method: requestOptions.method,
-      headers: {
-        ...requestOptions.headers,
-        ApiConstants.headerAuthorization: 'Bearer $token',
-      },
-    );
-    return _dio.request(
-      requestOptions.path,
-      data: requestOptions.data,
-      queryParameters: requestOptions.queryParameters,
-      options: options,
-    );
+  Future<void> setApiCredentials(String apiKey, String apiSecret) async {
+    await _storage.write(key: ApiConstants.storageKeyApiKey, value: apiKey);
+    await _storage.write(key: ApiConstants.storageKeyApiSecret, value: apiSecret);
+  }
+
+  Future<Map<String, String>?> getApiCredentials() async {
+    final apiKey = await _storage.read(key: ApiConstants.storageKeyApiKey);
+    final apiSecret = await _storage.read(key: ApiConstants.storageKeyApiSecret);
+    if (apiKey != null && apiSecret != null) {
+      return {'api_key': apiKey, 'api_secret': apiSecret};
+    }
+    return null;
   }
 
   Future<ApiResponse<T>> get<T>(
@@ -341,23 +316,59 @@ class ApiClient {
     T Function(dynamic json)? fromJson,
   ) {
     final data = response.data;
-    if (data is Map<String, dynamic>) {
-      final status = data['status'] as String? ?? 'success';
-      final message = data['message'] as String? ?? '';
-      final responseData = data['data'] ?? data;
 
-      if (fromJson != null && responseData != null) {
-        return ApiResponse.success(
-          data: fromJson(responseData),
-          message: message,
-        );
+    T? _tryTransform(dynamic raw) {
+      if (fromJson == null) return null;
+      try {
+        return fromJson(raw);
+      } catch (_) {
+        return null;
       }
-      return ApiResponse.success(
-        data: responseData as T?,
-        message: message,
-      );
     }
-    return ApiResponse.success(data: data as T?);
+
+    T? _safeCast(dynamic raw) {
+      try {
+        return raw as T?;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    if (data is Map<String, dynamic>) {
+      if (data.containsKey('message')) {
+        final responseData = data['message'];
+        if (responseData == null) {
+          return ApiResponse.success(data: null, statusCode: response.statusCode);
+        }
+        final transformed = _tryTransform(responseData);
+        if (transformed != null) {
+          return ApiResponse.success(data: transformed, statusCode: response.statusCode);
+        }
+        return ApiResponse.success(data: _safeCast(responseData), statusCode: response.statusCode);
+      }
+
+      if (data.containsKey('data')) {
+        final responseData = data['data'];
+        final transformed = _tryTransform(responseData);
+        if (transformed != null) {
+          return ApiResponse.success(data: transformed, statusCode: response.statusCode);
+        }
+        return ApiResponse.success(data: _safeCast(responseData), statusCode: response.statusCode);
+      }
+
+      final transformed = _tryTransform(data);
+      if (transformed != null) {
+        return ApiResponse.success(data: transformed, statusCode: response.statusCode);
+      }
+      return ApiResponse.success(data: _safeCast(data), statusCode: response.statusCode);
+    }
+
+    if (fromJson != null && data != null) {
+      try {
+        return ApiResponse.success(data: fromJson(data), statusCode: response.statusCode);
+      } catch (_) {}
+    }
+    return ApiResponse.success(data: _safeCast(data), statusCode: response.statusCode);
   }
 
   ApiResponse<T> _handleDioError<T>(DioException error) {
@@ -381,26 +392,10 @@ class ApiClient {
     _dio.options.baseUrl = url;
   }
 
-  Future<void> setToken(String token) async {
-    await _storage.write(
-      key: ApiConstants.storageKeyAccessToken,
-      value: token,
-    );
-  }
-
-  Future<void> setRefreshToken(String token) async {
-    await _storage.write(
-      key: ApiConstants.storageKeyRefreshToken,
-      value: token,
-    );
-  }
-
   Future<void> clearTokens() async {
     await _storage.delete(key: ApiConstants.storageKeyAccessToken);
     await _storage.delete(key: ApiConstants.storageKeyRefreshToken);
-  }
-
-  Future<String?> getToken() async {
-    return _storage.read(key: ApiConstants.storageKeyAccessToken);
+    await _storage.delete(key: ApiConstants.storageKeyApiKey);
+    await _storage.delete(key: ApiConstants.storageKeyApiSecret);
   }
 }

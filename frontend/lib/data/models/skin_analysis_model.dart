@@ -12,9 +12,9 @@ class SkinAnalysisModel extends SkinAnalysis {
 
   factory SkinAnalysisModel.fromJson(Map<String, dynamic> json) {
     return SkinAnalysisModel(
-      id: json['id'] as String? ?? '',
-      date: json['date'] != null
-          ? DateTime.parse(json['date'] as String)
+      id: json['name'] as String? ?? '',
+      date: json['assessment_date'] != null
+          ? DateTime.parse(json['assessment_date'] as String)
           : DateTime.now(),
       overallScore: json['overall_score'] as int? ?? 0,
       metrics: (json['metrics'] as List<dynamic>?)
@@ -29,8 +29,7 @@ class SkinAnalysisModel extends SkinAnalysis {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'date': date.toIso8601String(),
+    'assessment_date': date.toIso8601String(),
     'overall_score': overallScore,
     'metrics': (metrics as List<SkinMetricModel>).map((m) => m.toJson()).toList(),
     'summary': summary,

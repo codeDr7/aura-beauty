@@ -17,24 +17,24 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> login(String email, String password) async {
-    final response = await _remote.post<Map<String, dynamic>>(
+    final response = await _remote.post<dynamic>(
       ApiConstants.login,
-      data: {'email': email, 'password': password},
+      data: {'usr': email, 'pwd': password},
     );
-    if (response.isSuccess && response.data != null) {
-      final token = response.data!['token'] as String?;
-      final refreshToken = response.data!['refresh_token'] as String?;
-      if (token != null) await _api.setToken(token);
-      if (refreshToken != null) await _api.setRefreshToken(refreshToken);
-      final userData = response.data!['user'] as Map<String, dynamic>?;
-      if (userData != null) {
-        final user = UserModel.fromJson(userData);
-        await _local.saveMap('user_data', userData);
+    if (response.isSuccess) {
+      await _generateAndStoreApiKeys();
+      final profile = await _remote.get<Map<String, dynamic>>(
+        ApiConstants.getProfile,
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+      if (profile.isSuccess && profile.data != null) {
+        final user = UserModel.fromJson(profile.data!);
+        await _local.saveMap('user_data', profile.data!);
         return user;
       }
       return UserModel(
-        id: response.data!['user_id'] as String? ?? '',
-        name: response.data!['name'] as String? ?? email,
+        id: email,
+        name: email,
         email: email,
       );
     }
@@ -43,17 +43,21 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User> register(String email, String password, String name) async {
-    final response = await _remote.post<Map<String, dynamic>>(
+    final names = name.split(' ');
+    final response = await _remote.post<dynamic>(
       ApiConstants.register,
-      data: {'email': email, 'password': password, 'name': name},
+      data: {
+        'email': email,
+        'password': password,
+        'first_name': names.isNotEmpty ? names.first : name,
+        'last_name': names.length > 1 ? names.sublist(1).join(' ') : '',
+      },
     );
-    if (response.isSuccess && response.data != null) {
-      final token = response.data!['token'] as String?;
-      final refreshToken = response.data!['refresh_token'] as String?;
-      if (token != null) await _api.setToken(token);
-      if (refreshToken != null) await _api.setRefreshToken(refreshToken);
+    if (response.isSuccess) {
+      await _loginAfterRegister(email, password);
+      await _generateAndStoreApiKeys();
       return UserModel(
-        id: response.data!['user_id'] as String? ?? '',
+        id: email,
         name: name,
         email: email,
       );
@@ -61,45 +65,91 @@ class AuthRepositoryImpl implements AuthRepository {
     throw ApiException(message: response.message ?? 'Registration failed');
   }
 
+  Future<void> _loginAfterRegister(String email, String password) async {
+    try {
+      await _remote.post<dynamic>(ApiConstants.login, data: {'usr': email, 'pwd': password});
+    } catch (_) {}
+  }
+
+  Future<void> _generateAndStoreApiKeys() async {
+    try {
+      final keyResponse = await _remote.post<Map<String, dynamic>>(
+        ApiConstants.generateKeys,
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+      if (keyResponse.isSuccess && keyResponse.data != null) {
+        final apiKey = keyResponse.data!['api_key'] as String?;
+        final apiSecret = keyResponse.data!['api_secret'] as String?;
+        if (apiKey != null && apiSecret != null) {
+          await _api.setApiCredentials(apiKey, apiSecret);
+        }
+      }
+    } catch (_) {}
+  }
+
   @override
   Future<void> logout() async {
+    try {
+      await _remote.post(ApiConstants.logout);
+    } catch (_) {}
     await _api.clearTokens();
     await _local.delete('user_data');
   }
 
   @override
   Future<bool> checkAuth() async {
-    final token = await _api.getToken();
-    return token != null && token.isNotEmpty;
+    try {
+      final creds = await _api.getApiCredentials();
+      if (creds == null) return false;
+      final response = await _remote.get<Map<String, dynamic>>(
+        ApiConstants.getProfile,
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+      return response.isSuccess;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override
   Future<void> saveOnboardingData(OnboardingData data) async {
-    await _remote.post(ApiConstants.saveSkinAssessment, data: {
-      'skin_type': data.skinType,
-      'sensitivity': data.sensitivity,
-      'acne': data.acne,
-      'pigmentation': data.pigmentation,
-      'wrinkles': data.wrinkles,
-      'goals': data.skinGoals,
+    await _remote.post(
+      ApiConstants.updateProfile,
+      data: {
+        'full_name': data.name,
+        'age_range': data.ageRange,
+        'gender': data.gender,
+        'country': data.country,
+        'climate': data.climate,
+        'skin_type': data.skinType,
+        'skin_sensitivity': data.sensitivity,
+        'hair_type': data.hairType,
+      },
+    );
+    await _remote.post(ApiConstants.submitAssessment, data: {
+      'assessment_type': 'Skin',
+      'data': {
+        'condition_score': 0,
+        'severity': 0,
+        'sensitivity': data.sensitivity == 'High' ? 2 : data.sensitivity == 'Medium' ? 1 : 0,
+      },
     });
-    await _remote.post(ApiConstants.saveHairAssessment, data: {
-      'hair_type': data.hairType,
-      'texture': data.texture,
-      'thickness': data.thickness,
-      'density': data.density,
-      'scalp_condition': data.scalpCondition,
-      'issues': data.hairIssues,
-      'goals': data.hairGoals,
+    await _remote.post(ApiConstants.submitAssessment, data: {
+      'assessment_type': 'Hair',
+      'data': {
+        'condition_score': 0,
+        'severity': 0,
+        'scalp_condition': data.scalpCondition,
+      },
     });
-    await _remote.post(ApiConstants.saveLifestyleAssessment, data: {
-      'sleep_quality': data.sleepQuality,
-      'water_intake': data.waterIntake,
-      'activity_level': data.activityLevel,
-      'stress_level': data.stressLevel,
-      'sun_exposure': data.sunExposure,
+    await _remote.post(ApiConstants.submitAssessment, data: {
+      'assessment_type': 'Lifestyle',
+      'data': {
+        'sleep_quality': data.sleepQuality,
+        'stress_level': data.stressLevel,
+        'diet_quality': 'Fair',
+      },
     });
     await _local.saveString('onboarding_complete', 'true');
   }
 }
-

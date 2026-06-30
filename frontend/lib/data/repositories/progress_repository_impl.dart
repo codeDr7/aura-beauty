@@ -11,44 +11,30 @@ class ProgressRepositoryImpl implements ProgressRepository {
   ProgressRepositoryImpl(this._remote);
 
   @override
-  Future<ProgressStats> getStats() async {
-    final response = await _remote.get<Map<String, dynamic>>(
-      ApiConstants.progressStats,
-      fromJson: (json) => json as Map<String, dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return ProgressStatsModel.fromJson(response.data!);
-    }
-    throw ApiException(message: response.message ?? 'Failed to load stats');
-  }
-
-  @override
-  Future<List<ScorePoint>> getScoreTrend({String period = 'weekly'}) async {
+  Future<List<ProgressEntry>> getEntries({int limit = 30}) async {
     final response = await _remote.get<List<dynamic>>(
-      ApiConstants.progressCharts,
-      queryParameters: {'period': period},
+      ApiConstants.getProgress,
+      queryParameters: {'limit': limit},
       fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
       return response.data!
-          .map((e) => ScorePointModel.fromJson(e as Map<String, dynamic>))
+          .map((e) => ProgressEntryModel.fromJson(e as Map<String, dynamic>))
           .toList();
     }
-    throw ApiException(message: response.message ?? 'Failed to load trend');
+    throw ApiException(message: response.message ?? 'Failed to load progress');
   }
 
   @override
-  Future<List<ActivityEntry>> getRecentActivity() async {
-    final response = await _remote.get<List<dynamic>>(
-      ApiConstants.progressTimeline,
-      fromJson: (json) => json as List<dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return response.data!
-          .map((e) => ActivityEntryModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-    }
-    throw ApiException(message: response.message ?? 'Failed to load activity');
+  Future<void> logEntry({
+    required String entryType,
+    int value = 0,
+    String? notes,
+  }) async {
+    await _remote.post(ApiConstants.logProgress, data: {
+      'entry_type': entryType,
+      'value': value,
+      if (notes != null) 'notes': notes,
+    });
   }
 }
-

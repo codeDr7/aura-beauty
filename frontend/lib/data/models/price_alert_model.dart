@@ -13,23 +13,18 @@ class PriceAlertModel extends PriceAlert {
 
   factory PriceAlertModel.fromJson(Map<String, dynamic> json) {
     return PriceAlertModel(
-      id: json['id'] as String? ?? '',
-      productName: json['product_name'] as String? ?? '',
+      id: json['name'] as String? ?? '',
+      productName: json['product'] as String? ?? '',
       brand: json['brand'] as String? ?? '',
       currentPrice: (json['current_price'] as num?)?.toDouble() ?? 0.0,
       targetPrice: (json['target_price'] as num?)?.toDouble() ?? 0.0,
-      originalPrice: (json['original_price'] as num?)?.toDouble() ?? 0.0,
-      isActive: json['is_active'] as bool? ?? true,
+      originalPrice: (json['current_price'] as num?)?.toDouble() ?? 0.0,
+      isActive: json['is_triggered'] != true,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'product_name': productName,
-    'brand': brand,
-    'current_price': currentPrice,
+    'product': productName,
     'target_price': targetPrice,
-    'original_price': originalPrice,
-    'is_active': isActive,
   };
 }

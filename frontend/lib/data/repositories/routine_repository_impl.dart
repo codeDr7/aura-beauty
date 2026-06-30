@@ -13,7 +13,7 @@ class RoutineRepositoryImpl implements RoutineRepository {
   @override
   Future<List<Routine>> getRoutines() async {
     final response = await _remote.get<List<dynamic>>(
-      ApiConstants.routines,
+      ApiConstants.getRoutines,
       fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -26,21 +26,14 @@ class RoutineRepositoryImpl implements RoutineRepository {
 
   @override
   Future<Routine> getRoutineById(String id) async {
-    final response = await _remote.get<Map<String, dynamic>>(
-      '${ApiConstants.routineById}/$id',
-      fromJson: (json) => json as Map<String, dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return RoutineModel.fromJson(response.data!);
-    }
-    throw ApiException(message: response.message ?? 'Routine not found');
+    throw ApiException(message: 'Use getRoutines instead');
   }
 
   @override
-  Future<Routine> completeStep(String routineId, String stepId) async {
+  Future<Routine> completeStep(String routineId, String stepRowName) async {
     final response = await _remote.post<Map<String, dynamic>>(
-      ApiConstants.completeRoutineStep,
-      data: {'routine_id': routineId, 'step_id': stepId},
+      ApiConstants.completeStep,
+      data: {'routine_id': routineId, 'step_row_name': stepRowName},
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -51,9 +44,6 @@ class RoutineRepositoryImpl implements RoutineRepository {
 
   @override
   Future<void> completeRoutine(String routineId) async {
-    await _remote.post(
-      '${ApiConstants.routines}/$routineId/complete',
-    );
+    throw ApiException(message: 'Complete steps individually');
   }
 }
-

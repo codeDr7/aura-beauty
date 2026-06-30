@@ -13,23 +13,20 @@ class BadgeModel extends Badge {
 
   factory BadgeModel.fromJson(Map<String, dynamic> json) {
     return BadgeModel(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      id: json['badge'] as String? ?? json['name'] as String? ?? '',
+      name: json['badge_name'] as String? ?? '',
       category: json['category'] as String? ?? '',
-      isEarned: json['is_earned'] as bool? ?? false,
-      progress: (json['progress'] as num?)?.toDouble() ?? 0.0,
+      isEarned: json['earned_date'] != null,
+      progress: (json['points'] as num?)?.toDouble() ?? 0.0,
       description: json['description'] as String?,
-      iconName: json['icon_name'] as String?,
+      iconName: json['icon'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'category': category,
-    'is_earned': isEarned,
-    'progress': progress,
+    'badge_name': name,
+    'icon': iconName,
     'description': description,
-    'icon_name': iconName,
+    'points': progress,
   };
 }

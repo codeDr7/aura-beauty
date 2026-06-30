@@ -16,7 +16,7 @@ class UserRepositoryImpl implements UserRepository {
   Future<User> getProfile() async {
     try {
       final response = await _remote.get<Map<String, dynamic>>(
-        ApiConstants.userProfile,
+        ApiConstants.getProfile,
         fromJson: (json) => json as Map<String, dynamic>,
       );
       if (response.isSuccess && response.data != null) {
@@ -34,19 +34,14 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> updateProfile(User user) async {
-    final response = await _remote.put<Map<String, dynamic>>(
+    final response = await _remote.post<Map<String, dynamic>>(
       ApiConstants.updateProfile,
-      data: UserModel(
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        avatarUrl: user.avatarUrl,
-        skinType: user.skinType,
-        hairType: user.hairType,
-        skinConcerns: user.skinConcerns,
-        hairConcerns: user.hairConcerns,
-        sensitivity: user.sensitivity,
-      ).toJson(),
+      data: {
+        'full_name': user.name,
+        'skin_type': user.skinType,
+        'skin_sensitivity': user.sensitivity,
+        'hair_type': user.hairType,
+      },
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -57,15 +52,11 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<void> updatePassword(String currentPassword, String newPassword) async {
-    await _remote.put(
-      ApiConstants.changePassword,
-      data: {'current_password': currentPassword, 'new_password': newPassword},
-    );
+    throw ApiException(message: 'Password change not available');
   }
 
   @override
   Future<void> deleteAccount() async {
-    await _remote.delete(ApiConstants.deleteAccount);
+    throw ApiException(message: 'Account deletion not available');
   }
 }
-

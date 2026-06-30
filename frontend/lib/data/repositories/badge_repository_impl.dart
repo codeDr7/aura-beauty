@@ -11,12 +11,9 @@ class BadgeRepositoryImpl implements BadgeRepository {
   BadgeRepositoryImpl(this._remote);
 
   @override
-  Future<List<Badge>> getBadges({String? category}) async {
-    final params = <String, dynamic>{};
-    if (category != null && category != 'All') params['category'] = category;
+  Future<List<Badge>> getMyBadges() async {
     final response = await _remote.get<List<dynamic>>(
-      '${ApiConstants.notifications}/badges',
-      queryParameters: params.isNotEmpty ? params : null,
+      ApiConstants.getMyBadges,
       fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -28,15 +25,16 @@ class BadgeRepositoryImpl implements BadgeRepository {
   }
 
   @override
-  Future<List<String>> getCategories() async {
+  Future<List<Badge>> getAllBadges() async {
     final response = await _remote.get<List<dynamic>>(
-      '${ApiConstants.notifications}/badges/categories',
+      ApiConstants.getAllBadges,
       fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
-      return response.data!.map((e) => e as String).toList();
+      return response.data!
+          .map((e) => BadgeModel.fromJson(e as Map<String, dynamic>))
+          .toList();
     }
-    throw ApiException(message: response.message ?? 'Failed to load categories');
+    throw ApiException(message: response.message ?? 'Failed to load badges');
   }
 }
-

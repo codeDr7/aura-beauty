@@ -80,3 +80,33 @@ class ActivityEntryModel extends ActivityEntry {
     'color_name': colorName,
   };
 }
+
+class ProgressEntryModel extends ProgressEntry {
+  const ProgressEntryModel({
+    super.name,
+    super.entryDate,
+    super.entryType,
+    super.value,
+    super.notes,
+    super.image,
+  });
+
+  factory ProgressEntryModel.fromJson(Map<String, dynamic> json) {
+    return ProgressEntryModel(
+      name: json['name'] as String? ?? '',
+      entryDate: json['entry_date'] as String? ?? '',
+      entryType: json['entry_type'] as String? ?? 'Diary',
+      value: json['value'] as int? ?? 0,
+      notes: json['notes'] as String?,
+      image: json['image'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'entry_date': entryDate,
+    'entry_type': entryType,
+    'value': value,
+    if (notes != null) 'notes': notes,
+    if (image != null) 'image': image,
+  };
+}

@@ -14,10 +14,10 @@ class SubscriptionPlanModel extends SubscriptionPlan {
 
   factory SubscriptionPlanModel.fromJson(Map<String, dynamic> json) {
     return SubscriptionPlanModel(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      monthlyPrice: (json['monthly_price'] as num?)?.toDouble() ?? 0.0,
-      annualPrice: (json['annual_price'] as num?)?.toDouble() ?? 0.0,
+      id: json['name'] as String? ?? '',
+      name: json['plan_name'] as String? ?? '',
+      monthlyPrice: (json['price_monthly'] as num?)?.toDouble() ?? 0.0,
+      annualPrice: (json['price_yearly'] as num?)?.toDouble() ?? 0.0,
       description: json['description'] as String? ?? '',
       features: (json['features'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -29,13 +29,9 @@ class SubscriptionPlanModel extends SubscriptionPlan {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'monthly_price': monthlyPrice,
-    'annual_price': annualPrice,
-    'description': description,
+    'plan_name': name,
+    'price_monthly': monthlyPrice,
+    'price_yearly': annualPrice,
     'features': features,
-    'is_recommended': isRecommended,
-    'is_current': isCurrent,
   };
 }

@@ -11,8 +11,8 @@ class IngredientInteractionModel extends IngredientInteraction {
 
   factory IngredientInteractionModel.fromJson(Map<String, dynamic> json) {
     return IngredientInteractionModel(
-      ingredientA: json['ingredient_a'] as String? ?? '',
-      ingredientB: json['ingredient_b'] as String? ?? '',
+      ingredientA: json['ingredient_a_name'] as String? ?? json['ingredient_a'] as String? ?? '',
+      ingredientB: json['ingredient_b_name'] as String? ?? json['ingredient_b'] as String? ?? '',
       severity: _parseSeverity(json['severity'] as String? ?? 'safe'),
       description: json['description'] as String? ?? '',
       recommendation: json['recommendation'] as String? ?? '',
@@ -20,15 +20,13 @@ class IngredientInteractionModel extends IngredientInteraction {
   }
 
   static ConflictSeverity _parseSeverity(String s) {
-    switch (s) {
+    switch (s.toLowerCase()) {
       case 'low':
         return ConflictSeverity.low;
       case 'medium':
         return ConflictSeverity.medium;
       case 'high':
         return ConflictSeverity.high;
-      case 'critical':
-        return ConflictSeverity.critical;
       default:
         return ConflictSeverity.safe;
     }
@@ -39,6 +37,5 @@ class IngredientInteractionModel extends IngredientInteraction {
     'ingredient_b': ingredientB,
     'severity': severity.name,
     'description': description,
-    'recommendation': recommendation,
   };
 }

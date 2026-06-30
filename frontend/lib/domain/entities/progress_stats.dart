@@ -51,3 +51,24 @@ class ActivityEntry extends Equatable {
   @override
   List<Object?> get props => [date, title, subtitle, iconName, colorName];
 }
+
+class ProgressEntry extends Equatable {
+  final String name;
+  final String entryDate;
+  final String entryType;
+  final int value;
+  final String? notes;
+  final String? image;
+
+  const ProgressEntry({
+    this.name = '',
+    this.entryDate = '',
+    this.entryType = 'Diary',
+    this.value = 0,
+    this.notes,
+    this.image,
+  });
+
+  @override
+  List<Object?> get props => [name, entryDate, entryType, value, notes ?? '', image ?? ''];
+}

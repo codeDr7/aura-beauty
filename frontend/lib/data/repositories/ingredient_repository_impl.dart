@@ -12,43 +12,45 @@ class IngredientRepositoryImpl implements IngredientRepository {
 
   @override
   Future<List<String>> searchIngredients(String query) async {
-    final response = await _remote.get<List<dynamic>>(
-      ApiConstants.productIngredients,
-      queryParameters: {'q': query},
-      fromJson: (json) => json as List<dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return response.data!.map((e) => e as String).toList();
-    }
-    throw ApiException(message: response.message ?? 'Search failed');
+    final all = await getAllIngredients();
+    if (query.isEmpty) return all;
+    final lower = query.toLowerCase();
+    return all.where((name) => name.toLowerCase().contains(lower)).toList();
   }
 
-  @override
-  Future<List<IngredientInteraction>> checkInteractions(List<String> ingredients) async {
-    final response = await _remote.post<List<dynamic>>(
-      '${ApiConstants.productIngredients}/check',
-      data: {'ingredients': ingredients},
+  Future<List<String>> getAllIngredients() async {
+    final response = await _remote.get<List<dynamic>>(
+      ApiConstants.getIngredients,
       fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
       return response.data!
-          .map((e) =>
-              IngredientInteractionModel.fromJson(e as Map<String, dynamic>))
+          .map((e) => (e as Map<String, dynamic>)['ingredient_name'] as String? ?? '')
+          .where((n) => n.isNotEmpty)
           .toList();
+    }
+    return [];
+  }
+
+  @override
+  Future<List<IngredientInteraction>> checkInteractions(List<String> ingredients) async {
+    final response = await _remote.get<List<dynamic>>(
+      ApiConstants.getIngredientConflicts,
+      fromJson: (json) => json as List<dynamic>,
+    );
+    if (response.isSuccess && response.data != null) {
+      final allConflicts = response.data!
+          .map((e) => IngredientInteractionModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return allConflicts.where((c) =>
+          ingredients.contains(c.ingredientA) || ingredients.contains(c.ingredientB)
+      ).toList();
     }
     throw ApiException(message: response.message ?? 'Check failed');
   }
 
   @override
   Future<Map<String, String>> getIngredientDetails(String ingredient) async {
-    final response = await _remote.get<Map<String, dynamic>>(
-      '${ApiConstants.productIngredients}/$ingredient',
-      fromJson: (json) => json as Map<String, dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return response.data!.map((k, v) => MapEntry(k, v.toString()));
-    }
-    throw ApiException(message: response.message ?? 'Ingredient not found');
+    throw ApiException(message: 'Not available');
   }
 }
-

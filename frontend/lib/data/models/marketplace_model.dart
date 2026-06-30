@@ -11,23 +11,21 @@ class MarketplaceProductModel extends MarketplaceProduct {
   });
 
   factory MarketplaceProductModel.fromJson(Map<String, dynamic> json) {
+    final priceNum = (json['price'] as num?)?.toDouble() ?? 0.0;
     return MarketplaceProductModel(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      id: json['name'] as String? ?? '',
+      name: json['product_name'] as String? ?? '',
       brand: json['brand'] as String? ?? '',
-      price: json['price'] as String? ?? '\$0.00',
+      price: priceNum > 0 ? '\$${priceNum.toStringAsFixed(2)}' : '\$0.00',
       orders: json['orders'] as int? ?? 0,
       imageUrl: json['image_url'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
+    'product_name': name,
     'brand': brand,
     'price': price,
-    'orders': orders,
-    'image_url': imageUrl,
   };
 }
 
@@ -43,24 +41,24 @@ class PartnerOrderModel extends PartnerOrder {
 
   factory PartnerOrderModel.fromJson(Map<String, dynamic> json) {
     return PartnerOrderModel(
-      id: json['id'] as String? ?? '',
-      customer: json['customer'] as String? ?? '',
-      product: json['product'] as String? ?? '',
-      quantity: json['quantity'] as int? ?? 1,
-      status: json['status'] as String? ?? 'Pending',
-      date: json['date'] != null
-          ? DateTime.parse(json['date'] as String)
+      id: json['name'] as String? ?? '',
+      customer: json['user'] as String? ?? '',
+      product: (json['items'] as List<dynamic>?)?.isNotEmpty == true
+          ? (json['items']!.first as Map<String, dynamic>)['product'] as String? ?? ''
+          : '',
+      quantity: (json['items'] as List<dynamic>?)?.isNotEmpty == true
+          ? (json['items']!.first as Map<String, dynamic>)['quantity'] as int? ?? 1
+          : 1,
+      status: json['order_status'] as String? ?? 'Pending',
+      date: json['ordered_date'] != null
+          ? DateTime.parse(json['ordered_date'] as String)
           : DateTime.now(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'customer': customer,
-    'product': product,
-    'quantity': quantity,
-    'status': status,
-    'date': date.toIso8601String(),
+    'user': customer,
+    'order_status': status,
   };
 }
 
@@ -75,7 +73,7 @@ class PartnerRegistrationModel extends PartnerRegistration {
   factory PartnerRegistrationModel.fromJson(Map<String, dynamic> json) {
     return PartnerRegistrationModel(
       companyName: json['company_name'] as String? ?? '',
-      email: json['email'] as String? ?? '',
+      email: json['contact_email'] as String? ?? '',
       contactPerson: json['contact_person'] as String? ?? '',
       integrationType: json['integration_type'] as String? ?? 'REST API',
     );
@@ -83,7 +81,7 @@ class PartnerRegistrationModel extends PartnerRegistration {
 
   Map<String, dynamic> toJson() => {
     'company_name': companyName,
-    'email': email,
+    'contact_email': email,
     'contact_person': contactPerson,
     'integration_type': integrationType,
   };
@@ -107,6 +105,5 @@ class ApiCredentialsModel extends ApiCredentials {
   Map<String, dynamic> toJson() => {
     'api_key': apiKey,
     'api_secret': apiSecret,
-    'webhook_url': webhookUrl,
   };
 }

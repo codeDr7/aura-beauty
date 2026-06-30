@@ -12,20 +12,8 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
 
   @override
   Future<SkinAnalysis> analyzeSkin({String? imagePath}) async {
-    if (imagePath != null) {
-      final response = await _remote.uploadFile<Map<String, dynamic>>(
-        ApiConstants.uploadImage,
-        filePath: imagePath,
-        fieldName: 'image',
-        fromJson: (json) => json as Map<String, dynamic>,
-      );
-      if (response.isSuccess && response.data != null) {
-        return SkinAnalysisModel.fromJson(response.data!);
-      }
-      throw ApiException(message: response.message ?? 'Analysis failed');
-    }
-    final response = await _remote.post<Map<String, dynamic>>(
-      ApiConstants.aiCoachAnalyze,
+    final response = await _remote.get<Map<String, dynamic>>(
+      ApiConstants.analyzeNeeds,
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -36,28 +24,11 @@ class AnalysisRepositoryImpl implements AnalysisRepository {
 
   @override
   Future<List<SkinAnalysis>> getAnalysisHistory() async {
-    final response = await _remote.get<List<dynamic>>(
-      '${ApiConstants.aiCoachAnalyze}/history',
-      fromJson: (json) => json as List<dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return response.data!
-          .map((e) => SkinAnalysisModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-    }
-    throw ApiException(message: response.message ?? 'Failed to load history');
+    throw ApiException(message: 'Not available');
   }
 
   @override
   Future<SkinAnalysis> getAnalysisById(String id) async {
-    final response = await _remote.get<Map<String, dynamic>>(
-      '${ApiConstants.aiCoachAnalyze}/$id',
-      fromJson: (json) => json as Map<String, dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return SkinAnalysisModel.fromJson(response.data!);
-    }
-    throw ApiException(message: response.message ?? 'Analysis not found');
+    throw ApiException(message: 'Not available');
   }
 }
-

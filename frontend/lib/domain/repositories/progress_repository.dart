@@ -1,7 +1,6 @@
 ﻿import '../entities/progress_stats.dart';
 
 abstract class ProgressRepository {
-  Future<ProgressStats> getStats();
-  Future<List<ScorePoint>> getScoreTrend({String period = 'weekly'});
-  Future<List<ActivityEntry>> getRecentActivity();
+  Future<List<ProgressEntry>> getEntries({int limit = 30});
+  Future<void> logEntry({required String entryType, int value = 0, String? notes});
 }

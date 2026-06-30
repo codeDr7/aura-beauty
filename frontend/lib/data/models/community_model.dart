@@ -16,32 +16,25 @@ class CommunityPostModel extends CommunityPost {
 
   factory CommunityPostModel.fromJson(Map<String, dynamic> json) {
     return CommunityPostModel(
-      id: json['id'] as String? ?? '',
-      userId: json['user_id'] as String? ?? '',
-      userName: json['user_name'] as String? ?? '',
+      id: json['name'] as String? ?? '',
+      userId: json['author'] as String? ?? '',
+      userName: json['author_name'] as String? ?? '',
       userAvatarUrl: json['user_avatar_url'] as String?,
       content: json['content'] as String? ?? '',
-      imageUrl: json['image_url'] as String?,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
+      imageUrl: json['image'] as String?,
+      createdAt: json['creation'] != null
+          ? DateTime.parse(json['creation'] as String)
           : DateTime.now(),
       likes: json['likes'] as int? ?? 0,
-      comments: json['comments'] as int? ?? 0,
+      comments: json['comment_count'] as int? ?? 0,
       isLiked: json['is_liked'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'user_id': userId,
-    'user_name': userName,
-    'user_avatar_url': userAvatarUrl,
+    'author': userId,
     'content': content,
-    'image_url': imageUrl,
-    'created_at': createdAt.toIso8601String(),
-    'likes': likes,
-    'comments': comments,
-    'is_liked': isLiked,
+    'image': imageUrl,
   };
 }
 
@@ -57,22 +50,18 @@ class CommunityGroupModel extends CommunityGroup {
 
   factory CommunityGroupModel.fromJson(Map<String, dynamic> json) {
     return CommunityGroupModel(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      id: json['name'] as String? ?? '',
+      name: json['group_name'] as String? ?? '',
       description: json['description'] as String?,
-      memberCount: json['member_count'] as String? ?? '0',
+      memberCount: json['members_count']?.toString() ?? '0',
       imageUrl: json['image_url'] as String?,
       isJoined: json['is_joined'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
+    'group_name': name,
     'description': description,
-    'member_count': memberCount,
-    'image_url': imageUrl,
-    'is_joined': isJoined,
   };
 }
 
@@ -91,7 +80,7 @@ class ChallengeModel extends Challenge {
 
   factory ChallengeModel.fromJson(Map<String, dynamic> json) {
     return ChallengeModel(
-      id: json['id'] as String? ?? '',
+      id: json['name'] as String? ?? '',
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       durationDays: json['duration_days'] as int? ?? 14,
@@ -104,15 +93,9 @@ class ChallengeModel extends Challenge {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
     'title': title,
     'description': description,
     'duration_days': durationDays,
-    'remaining_days': remainingDays,
-    'progress': progress,
-    'participants': participants,
-    'is_joined': isJoined,
-    'category': category,
   };
 }
 
@@ -128,23 +111,19 @@ class CommentModel extends Comment {
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     return CommentModel(
-      id: json['id'] as String? ?? '',
-      userId: json['user_id'] as String? ?? '',
-      userName: json['user_name'] as String? ?? '',
+      id: json['name'] as String? ?? '',
+      userId: json['author'] as String? ?? '',
+      userName: json['author_name'] as String? ?? '',
       userAvatarUrl: json['user_avatar_url'] as String?,
       content: json['content'] as String? ?? '',
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'] as String)
+      createdAt: json['creation'] != null
+          ? DateTime.parse(json['creation'] as String)
           : DateTime.now(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'user_id': userId,
-    'user_name': userName,
-    'user_avatar_url': userAvatarUrl,
+    'author': userId,
     'content': content,
-    'created_at': createdAt.toIso8601String(),
   };
 }

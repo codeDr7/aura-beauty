@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/network/api_client.dart';
 import '../../core/constants/api_constants.dart';
+import '../../domain/repositories/auth_repository.dart';
+import '../../domain/entities/user.dart';
+import 'repository_providers.dart';
 
 class AuthState {
-  final String? user;
+  final User? user;
   final bool isAuthenticated;
   final bool isLoading;
   final String? error;
@@ -16,7 +19,7 @@ class AuthState {
   });
 
   AuthState copyWith({
-    String? user,
+    User? user,
     bool? isAuthenticated,
     bool? isLoading,
     String? error,
@@ -31,35 +34,19 @@ class AuthState {
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
-  final ApiClient _api = ApiClient();
+  final AuthRepository _authRepo;
 
-  AuthNotifier() : super(const AuthState());
+  AuthNotifier(this._authRepo) : super(const AuthState());
 
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _api.post<Map<String, dynamic>>(
-        ApiConstants.login,
-        data: {'email': email, 'password': password},
+      final user = await _authRepo.login(email, password);
+      state = state.copyWith(
+        user: user,
+        isAuthenticated: true,
+        isLoading: false,
       );
-      if (response.isSuccess && response.data != null) {
-        final token = response.data!['token'] as String?;
-        final refreshToken = response.data!['refresh_token'] as String?;
-        final userName = response.data!['user']?['name'] as String? ?? email;
-        if (token != null) {
-          await _api.setToken(token);
-        }
-        if (refreshToken != null) {
-          await _api.setRefreshToken(refreshToken);
-        }
-        state = state.copyWith(
-          user: userName,
-          isAuthenticated: true,
-          isLoading: false,
-        );
-      } else {
-        state = state.copyWith(isLoading: false, error: response.message);
-      }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -68,52 +55,33 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> register(String email, String password, String name) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _api.post<Map<String, dynamic>>(
-        ApiConstants.register,
-        data: {'email': email, 'password': password, 'name': name},
+      final user = await _authRepo.register(email, password, name);
+      state = state.copyWith(
+        user: user,
+        isAuthenticated: true,
+        isLoading: false,
       );
-      if (response.isSuccess && response.data != null) {
-        final token = response.data!['token'] as String?;
-        final refreshToken = response.data!['refresh_token'] as String?;
-        if (token != null) {
-          await _api.setToken(token);
-        }
-        if (refreshToken != null) {
-          await _api.setRefreshToken(refreshToken);
-        }
-        state = state.copyWith(
-          user: name,
-          isAuthenticated: true,
-          isLoading: false,
-        );
-      } else {
-        state = state.copyWith(isLoading: false, error: response.message);
-      }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   Future<void> logout() async {
-    await _api.clearTokens();
+    await _authRepo.logout();
     state = const AuthState();
   }
 
   Future<void> checkAuth() async {
     state = state.copyWith(isLoading: true);
-    final token = await _api.getToken();
-    if (token != null) {
-      state = state.copyWith(
-        isAuthenticated: true,
-        isLoading: false,
-        user: 'User',
-      );
-    } else {
-      state = state.copyWith(isLoading: false);
-    }
+    final isAuthenticated = await _authRepo.checkAuth();
+    state = state.copyWith(
+      isAuthenticated: isAuthenticated,
+      isLoading: false,
+    );
   }
 }
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier();
+  final authRepo = ref.watch(authRepositoryProvider);
+  return AuthNotifier(authRepo);
 });

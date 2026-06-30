@@ -13,16 +13,18 @@ class MarketplaceRepositoryImpl implements MarketplaceRepository {
   @override
   Future<List<MarketplaceProduct>> getProducts({String? brand}) async {
     final params = <String, dynamic>{};
-    if (brand != null && brand != 'All Brands') params['brand'] = brand;
-    final response = await _remote.get<List<dynamic>>(
-      ApiConstants.products,
+    if (brand != null && brand != 'All Brands') params['filters'] = '{"brand":"$brand"}';
+    final response = await _remote.get<Map<String, dynamic>>(
+      ApiConstants.getProducts,
       queryParameters: params.isNotEmpty ? params : null,
-      fromJson: (json) => json as List<dynamic>,
+      fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
-      return response.data!
-          .map((e) =>
-              MarketplaceProductModel.fromJson(e as Map<String, dynamic>))
+      final list = response.data!['products'] as List<dynamic>? ??
+          response.data!['message'] as List<dynamic>? ??
+          [];
+      return list
+          .map((e) => MarketplaceProductModel.fromJson(e as Map<String, dynamic>))
           .toList();
     }
     throw ApiException(message: response.message ?? 'Failed to load products');
@@ -31,7 +33,7 @@ class MarketplaceRepositoryImpl implements MarketplaceRepository {
   @override
   Future<List<PartnerOrder>> getOrders() async {
     final response = await _remote.get<List<dynamic>>(
-      '${ApiConstants.notifications}/orders',
+      ApiConstants.partnerGetOrders,
       fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -45,34 +47,26 @@ class MarketplaceRepositoryImpl implements MarketplaceRepository {
   @override
   Future<void> registerPartner(PartnerRegistration registration) async {
     await _remote.post(
-      '${ApiConstants.notifications}/partner',
-      data: PartnerRegistrationModel(
-        companyName: registration.companyName,
-        email: registration.email,
-        contactPerson: registration.contactPerson,
-        integrationType: registration.integrationType,
-      ).toJson(),
+      ApiConstants.partnerRegister,
+      data: {
+        'company_name': registration.companyName,
+        'contact_email': registration.email,
+        'contact_person': registration.contactPerson,
+        'integration_type': registration.integrationType,
+      },
     );
   }
 
   @override
   Future<ApiCredentials> getApiCredentials() async {
-    final response = await _remote.get<Map<String, dynamic>>(
-      '${ApiConstants.notifications}/partner/credentials',
-      fromJson: (json) => json as Map<String, dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return ApiCredentialsModel.fromJson(response.data!);
-    }
-    throw ApiException(message: response.message ?? 'Failed to load credentials');
+    throw ApiException(message: 'Credentials provided at registration time');
   }
 
   @override
   Future<void> updateOrderStatus(String orderId, String status) async {
-    await _remote.put(
-      '${ApiConstants.notifications}/orders/$orderId',
-      data: {'status': status},
+    await _remote.post(
+      ApiConstants.partnerUpdateOrderStatus,
+      data: {'order_id': orderId, 'status': status},
     );
   }
 }
-

@@ -10,9 +10,20 @@ class ChatMessageModel extends ChatMessage {
 
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) {
     return ChatMessageModel(
-      id: json['id'] as String? ?? '',
-      text: json['text'] as String? ?? '',
-      isUser: json['is_user'] as bool? ?? false,
+      id: json['name'] as String? ?? '',
+      text: json['message'] as String? ?? '',
+      isUser: true,
+      timestamp: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'] as String)
+          : DateTime.now(),
+    );
+  }
+
+  factory ChatMessageModel.fromResponse(Map<String, dynamic> json) {
+    return ChatMessageModel(
+      id: json['name'] as String? ?? '',
+      text: json['response'] as String? ?? '',
+      isUser: false,
       timestamp: json['timestamp'] != null
           ? DateTime.parse(json['timestamp'] as String)
           : DateTime.now(),
@@ -20,9 +31,6 @@ class ChatMessageModel extends ChatMessage {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'text': text,
-    'is_user': isUser,
-    'timestamp': timestamp.toIso8601String(),
+    'message': text,
   };
 }

@@ -16,9 +16,9 @@ class DiaryEntryModel extends DiaryEntry {
 
   factory DiaryEntryModel.fromJson(Map<String, dynamic> json) {
     return DiaryEntryModel(
-      id: json['id'] as String? ?? '',
-      date: json['date'] != null
-          ? DateTime.parse(json['date'] as String)
+      id: json['name'] as String? ?? '',
+      date: json['entry_date'] != null
+          ? DateTime.parse(json['entry_date'] as String)
           : DateTime.now(),
       moodLevel: json['mood_level'] as int? ?? 2,
       skinCondition: json['skin_condition'] as String?,
@@ -32,8 +32,7 @@ class DiaryEntryModel extends DiaryEntry {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'date': date.toIso8601String(),
+    'entry_date': date.toIso8601String(),
     'mood_level': moodLevel,
     'skin_condition': skinCondition,
     'sleep_hours': sleepHours,

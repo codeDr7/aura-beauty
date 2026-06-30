@@ -348,29 +348,38 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     );
     try {
       final api = ApiClient();
-      await api.post(ApiConstants.saveSkinAssessment, data: {
-        'skin_type': state.skinAssessment.skinType,
-        'sensitivity': state.skinAssessment.sensitivity,
-        'acne': state.skinAssessment.acne,
-        'pigmentation': state.skinAssessment.pigmentation,
-        'wrinkles': state.skinAssessment.wrinkles,
-        'goals': state.skinAssessment.goals,
+      await api.post(ApiConstants.submitAssessment, data: {
+        'assessment_type': 'Skin',
+        'data': {
+          'skin_type': state.skinAssessment.skinType,
+          'sensitivity': state.skinAssessment.sensitivity,
+          'acne': state.skinAssessment.acne,
+          'pigmentation': state.skinAssessment.pigmentation,
+          'wrinkles': state.skinAssessment.wrinkles,
+          'goals': state.skinAssessment.goals,
+        },
       });
-      await api.post(ApiConstants.saveHairAssessment, data: {
-        'hair_type': state.hairAssessment.hairType,
-        'texture': state.hairAssessment.texture,
-        'thickness': state.hairAssessment.thickness,
-        'density': state.hairAssessment.density,
-        'scalp_condition': state.hairAssessment.scalpCondition,
-        'issues': state.hairAssessment.issues,
-        'goals': state.hairAssessment.goals,
+      await api.post(ApiConstants.submitAssessment, data: {
+        'assessment_type': 'Hair',
+        'data': {
+          'hair_type': state.hairAssessment.hairType,
+          'texture': state.hairAssessment.texture,
+          'thickness': state.hairAssessment.thickness,
+          'density': state.hairAssessment.density,
+          'scalp_condition': state.hairAssessment.scalpCondition,
+          'issues': state.hairAssessment.issues,
+          'goals': state.hairAssessment.goals,
+        },
       });
-      await api.post(ApiConstants.saveLifestyleAssessment, data: {
-        'sleep_quality': state.lifestyleAssessment.sleepQuality,
-        'water_intake': state.lifestyleAssessment.waterIntake,
-        'activity_level': state.lifestyleAssessment.activityLevel,
-        'stress_level': state.lifestyleAssessment.stressLevel,
-        'sun_exposure': state.lifestyleAssessment.sunExposure,
+      await api.post(ApiConstants.submitAssessment, data: {
+        'assessment_type': 'Lifestyle',
+        'data': {
+          'sleep_quality': state.lifestyleAssessment.sleepQuality,
+          'water_intake': state.lifestyleAssessment.waterIntake,
+          'activity_level': state.lifestyleAssessment.activityLevel,
+          'stress_level': state.lifestyleAssessment.stressLevel,
+          'sun_exposure': state.lifestyleAssessment.sunExposure,
+        },
       });
       state = OnboardingState(
         currentStep: state.currentStep,
@@ -393,10 +402,8 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     }
   }
 
-  @override
   void dispose() {
     _pageController.dispose();
-    super.dispose();
   }
 }
 

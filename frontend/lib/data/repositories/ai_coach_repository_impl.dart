@@ -18,7 +18,7 @@ class AiCoachRepositoryImpl implements AiCoachRepository {
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
-      return ChatMessageModel.fromJson(response.data!);
+      return ChatMessageModel.fromResponse(response.data!);
     }
     throw ApiException(message: response.message ?? 'Failed to send message');
   }
@@ -39,26 +39,11 @@ class AiCoachRepositoryImpl implements AiCoachRepository {
 
   @override
   Future<String> getAnalysis() async {
-    final response = await _remote.get<Map<String, dynamic>>(
-      ApiConstants.aiCoachAnalyze,
-      fromJson: (json) => json as Map<String, dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return response.data!['analysis'] as String? ?? '';
-    }
-    throw ApiException(message: response.message ?? 'Analysis failed');
+    throw ApiException(message: 'Use analyzeNeeds endpoint');
   }
 
   @override
   Future<List<String>> getRecommendations() async {
-    final response = await _remote.get<List<dynamic>>(
-      ApiConstants.aiCoachRecommend,
-      fromJson: (json) => json as List<dynamic>,
-    );
-    if (response.isSuccess && response.data != null) {
-      return response.data!.map((e) => e as String).toList();
-    }
-    throw ApiException(message: response.message ?? 'Failed to get recommendations');
+    throw ApiException(message: 'Use getRecommendations endpoint');
   }
 }
-

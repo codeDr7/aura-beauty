@@ -469,18 +469,11 @@ class AppRouter {
     final isOnSplash = state.matchedLocation == '/splash';
     if (isOnSplash) return null;
 
-    final isLoggedIn = false;
     final isOnAuthRoute = state.matchedLocation == '/login' ||
         state.matchedLocation == '/register';
     final isOnOnboarding = state.matchedLocation.startsWith('/onboarding');
 
-    if (!isLoggedIn && !isOnAuthRoute && !isOnOnboarding) {
-      return '/login';
-    }
-
-    if (isLoggedIn && isOnAuthRoute) {
-      return '/home';
-    }
+    if (isOnOnboarding) return null;
 
     return null;
   }

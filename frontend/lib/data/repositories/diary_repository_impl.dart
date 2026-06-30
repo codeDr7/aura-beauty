@@ -17,13 +17,18 @@ class DiaryRepositoryImpl implements DiaryRepository {
   Future<List<DiaryEntry>> getEntries() async {
     try {
       final response = await _remote.get<List<dynamic>>(
-        '${ApiConstants.notifications}/diary',
+        ApiConstants.getProgress,
+        queryParameters: {'limit': 50},
         fromJson: (json) => json as List<dynamic>,
       );
       if (response.isSuccess && response.data != null) {
-        return response.data!
+        final entries = response.data!
             .map((e) => DiaryEntryModel.fromJson(e as Map<String, dynamic>))
             .toList();
+        await _local.saveString('diary_entries', jsonEncode(
+          response.data!.map((e) => e as Map<String, dynamic>).toList(),
+        ));
+        return entries;
       }
     } catch (_) {}
     final cached = await _local.getString('diary_entries');
@@ -39,19 +44,12 @@ class DiaryRepositoryImpl implements DiaryRepository {
   @override
   Future<DiaryEntry> createEntry(DiaryEntry entry) async {
     final response = await _remote.post<Map<String, dynamic>>(
-      '${ApiConstants.notifications}/diary',
-      data: DiaryEntryModel(
-        id: entry.id,
-        date: entry.date,
-        moodLevel: entry.moodLevel,
-        skinCondition: entry.skinCondition,
-        sleepHours: entry.sleepHours,
-        waterIntake: entry.waterIntake,
-        stressLevel: entry.stressLevel,
-        breakoutLocation: entry.breakoutLocation,
-        notes: entry.notes,
-        photoUrl: entry.photoUrl,
-      ).toJson(),
+      ApiConstants.logProgress,
+      data: {
+        'entry_type': 'Diary',
+        'value': entry.moodLevel ?? 5,
+        if (entry.notes != null) 'notes': entry.notes,
+      },
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -62,7 +60,6 @@ class DiaryRepositoryImpl implements DiaryRepository {
 
   @override
   Future<void> deleteEntry(String id) async {
-    await _remote.delete('${ApiConstants.notifications}/diary/$id');
+    throw ApiException(message: 'Not available');
   }
 }
-

@@ -13,7 +13,7 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
   @override
   Future<List<SubscriptionPlan>> getPlans() async {
     final response = await _remote.get<List<dynamic>>(
-      ApiConstants.subscriptionPlans,
+      ApiConstants.getPlans,
       fromJson: (json) => json as List<dynamic>,
     );
     if (response.isSuccess && response.data != null) {
@@ -26,27 +26,32 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
   @override
   Future<SubscriptionPlan> getCurrentSubscription() async {
-    final response = await _remote.get<Map<String, dynamic>>(
-      ApiConstants.currentSubscription,
-      fromJson: (json) => json as Map<String, dynamic>,
+    final response = await _remote.get<List<dynamic>>(
+      ApiConstants.getPlans,
+      fromJson: (json) => json as List<dynamic>,
     );
-    if (response.isSuccess && response.data != null) {
-      return SubscriptionPlanModel.fromJson(response.data!);
+    if (response.isSuccess && response.data != null && response.data!.isNotEmpty) {
+      return SubscriptionPlanModel.fromJson(
+        response.data!.first as Map<String, dynamic>,
+      );
     }
-    throw ApiException(message: response.message ?? 'Failed to load subscription');
+    throw ApiException(message: 'No subscription found');
   }
 
   @override
-  Future<String> createCheckoutSession(String planId, {bool isAnnual = true}) async {
+  Future<String> upgradePlan(String planId, {bool isAnnual = true}) async {
     final response = await _remote.post<Map<String, dynamic>>(
-      ApiConstants.createCheckoutSession,
-      data: {'plan_id': planId, 'is_annual': isAnnual},
+      ApiConstants.upgradePlan,
+      data: {
+        'plan_id': planId,
+        'subscription_type': isAnnual ? 'Yearly' : 'Monthly',
+      },
       fromJson: (json) => json as Map<String, dynamic>,
     );
     if (response.isSuccess && response.data != null) {
-      return response.data!['url'] as String? ?? '';
+      return response.data!['subscription'] as String? ?? planId;
     }
-    throw ApiException(message: response.message ?? 'Failed to create checkout');
+    throw ApiException(message: response.message ?? 'Failed to upgrade plan');
   }
 
   @override
@@ -54,4 +59,3 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
     await _remote.post(ApiConstants.cancelSubscription);
   }
 }
-
