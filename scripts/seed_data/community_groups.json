@@ -1,0 +1,12 @@
+[
+  {"doctype":"Community Group","group_name":"Skincare Enthusiasts","description":"For everyone passionate about skincare routines and products","category":"General","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Acne Support Network","description":"Supportive community for acne-prone skin warriors","category":"Acne","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Hair Growth Journey","description":"Share tips and experiences on hair growth and thickness","category":"Hair Growth","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Sensitive Skin Care","description":"Gentle routines and product recommendations for sensitive skin","category":"Sensitive Skin","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Beauty Minimalists","description":"Less is more — simplified, effective routines","category":"Beginners","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Anti-Aging Warriors","description":"Evidence-based anti-aging routines and ingredient discussions","category":"Anti-Aging","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Ingredient Investigators","description":"Deep dive into cosmetic chemistry and formulation","category":"General","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Curly Hair Corner","description":"For curly, coily, and wavy hair care enthusiasts","category":"Hair Growth","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Men\'s Grooming Lounge","description":"Skincare and grooming for men","category":"General","is_private":0,"is_active":1},
+  {"doctype":"Community Group","group_name":"Aura Ambassadors","description":"Beta testers and power users sharing feedback","category":"General","is_private":1,"is_active":1}
+]

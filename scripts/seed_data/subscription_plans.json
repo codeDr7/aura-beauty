@@ -1,0 +1,13 @@
+[
+  {"doctype":"Subscription Plan","plan_name":"Free","plan_type":"Free","price_monthly":0,"price_yearly":0,"description":"Essential beauty tracking and community access","sort_order":1,"is_active":1,"features":[
+    {"feature_name":"Basic profile and assessment","is_included":1},{"feature_name":"Community access","is_included":1},{"feature_name":"Basic routine tracking","is_included":1},{"feature_name":"AI Coach (10 chats/month)","is_included":1},{"feature_name":"Progress tracking (basic)","is_included":1},{"feature_name":"Product recommendations","is_included":0},{"feature_name":"Advanced analytics","is_included":0},{"feature_name":"Priority support","is_included":0},{"feature_name":"Exclusive products","is_included":0}
+  ]},
+  {"doctype":"Subscription Plan","plan_name":"Aura Plus Monthly","plan_type":"Aura Plus","price_monthly":9.99,"price_yearly":99.99,"description":"Enhanced tracking, recommendations, and AI coach","sort_order":2,"is_active":1,"features":[
+    {"feature_name":"Everything in Free","is_included":1},{"feature_name":"AI Coach (unlimited)","is_included":1},{"feature_name":"Advanced product recommendations","is_included":1},{"feature_name":"Ingredient analysis","is_included":1},{"feature_name":"Detailed progress analytics","is_included":1},{"feature_name":"Price alerts (up to 10)","is_included":1},{"feature_name":"Priority support","is_included":0},{"feature_name":"Exclusive products","is_included":0}
+  ]},
+  {"doctype":"Subscription Plan","plan_name":"Aura Plus Yearly","plan_type":"Aura Plus","price_monthly":8.33,"price_yearly":99.99,"description":"Aura Plus at a discounted annual rate","sort_order":3,"is_active":1,"features":[]},
+  {"doctype":"Subscription Plan","plan_name":"Aura Premium Monthly","plan_type":"Aura Premium","price_monthly":19.99,"price_yearly":199.99,"description":"Full access including marketplace and priority support","sort_order":4,"is_active":1,"features":[
+    {"feature_name":"Everything in Aura Plus","is_included":1},{"feature_name":"Marketplace partner access","is_included":1},{"feature_name":"Unlimited price alerts","is_included":1},{"feature_name":"Subscription-exclusive products","is_included":1},{"feature_name":"Advanced AI skin analysis","is_included":1},{"feature_name":"Priority support","is_included":1},{"feature_name":"Early access to new features","is_included":1}
+  ]},
+  {"doctype":"Subscription Plan","plan_name":"Aura Premium Yearly","plan_type":"Aura Premium","price_monthly":16.67,"price_yearly":199.99,"description":"Aura Premium at a discounted annual rate","sort_order":5,"is_active":1,"features":[]}
+]

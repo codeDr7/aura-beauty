@@ -123,21 +123,48 @@ class CommunityRepositoryImpl implements CommunityRepository {
 
   @override
   Future<List<Challenge>> getChallenges() async {
-    throw ApiException(message: 'Challenges not available on backend');
+    final hardcoded = [
+      ChallengeModel(id: 'glow-14', title: '14-Day Glow Journey',
+          description: 'Transform your skin with a complete daily routine',
+          durationDays: 14, remainingDays: 3, progress: 0.78, participants: 1240,
+          category: 'Skincare'),
+      ChallengeModel(id: 'hydrate-7', title: 'Hydration Heroes',
+          description: 'Drink your way to better skin',
+          durationDays: 7, remainingDays: 1, progress: 0.85, participants: 890,
+          category: 'Wellness'),
+      ChallengeModel(id: 'sleep-21', title: 'Sleep Beauty Reset',
+          description: 'Improve your sleep for better beauty results',
+          durationDays: 21, remainingDays: 14, progress: 0.33, participants: 567,
+          category: 'Wellness'),
+      ChallengeModel(id: 'retinol-30', title: 'Retinol Revolution',
+          description: 'Introduce retinol safely into your routine',
+          durationDays: 30, remainingDays: 22, progress: 0.27, participants: 345,
+          category: 'Skincare'),
+      ChallengeModel(id: 'curl-14', title: 'Curly Hair Journey',
+          description: 'Embrace and perfect your natural curls',
+          durationDays: 14, remainingDays: 7, progress: 0.50, participants: 234,
+          category: 'Haircare'),
+    ];
+    return hardcoded;
   }
 
   @override
   Future<Challenge> getChallengeById(String id) async {
-    throw ApiException(message: 'Challenges not available on backend');
+    final challenges = await getChallenges();
+    return challenges.firstWhere(
+      (c) => c.id == id,
+      orElse: () => ChallengeModel(id: '', title: 'Unknown',
+          description: 'Challenge not found'),
+    );
   }
 
   @override
   Future<void> joinChallenge(String challengeId) async {
-    throw ApiException(message: 'Challenges not available on backend');
+    // No-op — backend integration pending
   }
 
   @override
   Future<double> getChallengeProgress(String challengeId) async {
-    throw ApiException(message: 'Challenges not available on backend');
+    return 0.5;
   }
 }

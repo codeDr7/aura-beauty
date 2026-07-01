@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../presentation/providers/auth_provider.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
 import '../../presentation/screens/auth/register_screen.dart';
@@ -33,9 +34,12 @@ import '../../presentation/widgets/common/aura_bottom_nav.dart';
 const String _initialLocation = '/splash';
 
 class AppRouter {
-  AppRouter(Ref ref) : _router = _createRouter(ref);
+  late final GoRouter _router;
 
-  final GoRouter _router;
+  AppRouter(Ref ref) {
+    _router = _createRouter(ref);
+    ref.listen(authProvider, (_, __) => _router.refresh());
+  }
 
   GoRouter get config => _router;
 
@@ -43,7 +47,7 @@ class AppRouter {
     return GoRouter(
       initialLocation: _initialLocation,
       debugLogDiagnostics: false,
-      redirect: (context, state) => _authRedirect(context, state),
+      redirect: (context, state) => _authRedirect(context, state, ref),
       routes: [
         GoRoute(
           path: '/splash',
@@ -465,7 +469,8 @@ class AppRouter {
     );
   }
 
-  static String? _authRedirect(BuildContext context, GoRouterState state) {
+  static String? _authRedirect(BuildContext context, GoRouterState state, Ref ref) {
+    final authState = ref.read(authProvider);
     final isOnSplash = state.matchedLocation == '/splash';
     if (isOnSplash) return null;
 
@@ -473,8 +478,10 @@ class AppRouter {
         state.matchedLocation == '/register';
     final isOnOnboarding = state.matchedLocation.startsWith('/onboarding');
 
-    if (isOnOnboarding) return null;
+    if (isOnAuthRoute || isOnOnboarding) return null;
 
+    if (authState.isLoading) return null;
+    if (!authState.isAuthenticated) return '/login';
     return null;
   }
 }

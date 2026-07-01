@@ -1,84 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class RoutineItem {
-  final String name;
-  final String type;
-  final double progress;
-  final List<String> steps;
-
-  const RoutineItem({
-    required this.name,
-    required this.type,
-    required this.progress,
-    required this.steps,
-  });
-}
-
-class ProductRecommendation {
-  final String name;
-  final String subtitle;
-  final String price;
-  final String? badgeLabel;
-  final String imageUrl;
-
-  const ProductRecommendation({
-    required this.name,
-    required this.subtitle,
-    required this.price,
-    this.badgeLabel,
-    this.imageUrl = '',
-  });
-}
-
-class ChallengeItem {
-  final String title;
-  final String description;
-  final int duration;
-  final int remaining;
-  final double progress;
-  final int participants;
-
-  const ChallengeItem({
-    required this.title,
-    required this.description,
-    required this.duration,
-    required this.remaining,
-    required this.progress,
-    required this.participants,
-  });
-}
-
-class CommunityHighlight {
-  final String userName;
-  final String content;
-  final int likes;
-  final int comments;
-
-  const CommunityHighlight({
-    required this.userName,
-    required this.content,
-    required this.likes,
-    required this.comments,
-  });
-}
+import '../../domain/entities/product.dart';
+import '../../domain/entities/community.dart';
+import '../../domain/entities/routine.dart';
+import '../../domain/repositories/product_repository.dart';
+import '../../domain/repositories/routine_repository.dart';
+import '../../domain/repositories/community_repository.dart';
+import '../providers/repository_providers.dart';
 
 class HomeState {
   final String greeting;
-  final String userName;
   final int skinScore;
   final int hairScore;
-  final List<RoutineItem> routines;
-  final List<ProductRecommendation> recommendations;
-  final List<ChallengeItem> challenges;
-  final List<CommunityHighlight> highlights;
+  final List<Routine> routines;
+  final List<Product> recommendations;
+  final List<Challenge> challenges;
+  final List<CommunityPost> highlights;
   final bool isLoading;
   final String? error;
 
   const HomeState({
     this.greeting = 'Good morning',
-    this.userName = 'Sarah',
-    this.skinScore = 72,
-    this.hairScore = 65,
+    this.skinScore = 0,
+    this.hairScore = 0,
     this.routines = const [],
     this.recommendations = const [],
     this.challenges = const [],
@@ -89,19 +32,17 @@ class HomeState {
 
   HomeState copyWith({
     String? greeting,
-    String? userName,
     int? skinScore,
     int? hairScore,
-    List<RoutineItem>? routines,
-    List<ProductRecommendation>? recommendations,
-    List<ChallengeItem>? challenges,
-    List<CommunityHighlight>? highlights,
+    List<Routine>? routines,
+    List<Product>? recommendations,
+    List<Challenge>? challenges,
+    List<CommunityPost>? highlights,
     bool? isLoading,
     String? error,
   }) {
     return HomeState(
       greeting: greeting ?? this.greeting,
-      userName: userName ?? this.userName,
       skinScore: skinScore ?? this.skinScore,
       hairScore: hairScore ?? this.hairScore,
       routines: routines ?? this.routines,
@@ -115,49 +56,52 @@ class HomeState {
 }
 
 class HomeNotifier extends StateNotifier<HomeState> {
-  HomeNotifier() : super(const HomeState()) {
-    _loadInitialData();
+  final ProductRepository _productRepo;
+  final RoutineRepository _routineRepo;
+  final CommunityRepository _communityRepo;
+
+  HomeNotifier(this._productRepo, this._routineRepo, this._communityRepo) : super(const HomeState()) {
+    loadHomeData();
   }
 
-  void _loadInitialData() {
+  String _getGreeting() {
     final hour = DateTime.now().hour;
-    String greeting;
-    if (hour < 12) {
-      greeting = 'Good morning';
-    } else if (hour < 17) {
-      greeting = 'Good afternoon';
-    } else {
-      greeting = 'Good evening';
-    }
-
-    state = state.copyWith(
-      greeting: greeting,
-      routines: [
-        RoutineItem(name: 'Morning', type: 'Cleanse • Tone • Moisturize', progress: 0.6, steps: ['Cleanse', 'Tone', 'Moisturize', 'SPF']),
-        RoutineItem(name: 'Evening', type: 'Double Cleanse • Serum • Cream', progress: 0.3, steps: ['Double Cleanse', 'Serum', 'Night Cream']),
-      ],
-      recommendations: [
-        ProductRecommendation(name: 'Hydrating Serum', subtitle: 'Vitamin C + HA', price: '\$48.00', badgeLabel: 'Best Seller'),
-        ProductRecommendation(name: 'Retinol Night Cream', subtitle: 'Anti-Aging', price: '\$65.00', badgeLabel: 'New'),
-        ProductRecommendation(name: 'Gentle Cleanser', subtitle: 'For Sensitive Skin', price: '\$32.00'),
-      ],
-      challenges: [
-        ChallengeItem(title: '14-Day Glow Journey', description: 'Complete your daily routine', duration: 14, remaining: 3, progress: 0.64, participants: 1240),
-      ],
-      highlights: [
-        CommunityHighlight(userName: 'Aisha M.', content: 'Just completed my 14-day glow challenge! My skin has never looked better ✨', likes: 42, comments: 12),
-      ],
-    );
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
   }
 
   Future<void> loadHomeData() async {
-    state = state.copyWith(isLoading: true);
-    await Future.delayed(const Duration(seconds: 1));
-    _loadInitialData();
-    state = state.copyWith(isLoading: false);
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final products = await _productRepo.getProducts().catchError((_) => <Product>[]);
+      final routines = await _routineRepo.getRoutines().catchError((_) => <Routine>[]);
+      final feed = await _communityRepo.getFeed(page: 1, limit: 3).catchError((_) => <CommunityPost>[]);
+      final challenges = await _communityRepo.getChallenges().catchError((_) => <Challenge>[]);
+
+      final recommended = products.where((p) => p.isRecommended).toList();
+      final topRecs = recommended.isNotEmpty ? recommended : products.take(6).toList();
+
+      state = state.copyWith(
+        greeting: _getGreeting(),
+        skinScore: 72,
+        hairScore: 65,
+        routines: routines,
+        recommendations: topRecs,
+        highlights: feed.take(2).toList(),
+        challenges: challenges,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
   }
 }
 
 final homeProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
-  return HomeNotifier();
+  return HomeNotifier(
+    ref.watch(productRepositoryProvider),
+    ref.watch(routineRepositoryProvider),
+    ref.watch(communityRepositoryProvider),
+  );
 });

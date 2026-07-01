@@ -1,0 +1,61 @@
+[
+  {"doctype":"Routine Template","template_name":"Morning Glow","routine_type":"Morning","description":"Energizing morning skincare routine to protect and brighten","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Gentle Cleanser","step_description":"Start with a gentle cleanser to remove overnight residue","duration_minutes":2,"product_category":"Cleanser"},
+    {"step_number":2,"step_name":"Vitamin C Serum","step_description":"Apply antioxidant vitamin C serum for brightening and protection","duration_minutes":1,"product_category":"Serum"},
+    {"step_number":3,"step_name":"Moisturizer","step_description":"Hydrate with a lightweight moisturizer","duration_minutes":1,"product_category":"Moisturizer"},
+    {"step_number":4,"step_name":"SPF","step_description":"Finish with broad-spectrum SPF 50+ sunscreen","duration_minutes":1,"product_category":"SPF"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Night Recovery","routine_type":"Evening","description":"Rejuvenating nighttime routine for repair and regeneration","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Oil Cleanser","step_description":"Remove makeup and sunscreen with oil-based cleanser","duration_minutes":2,"product_category":"Cleanser"},
+    {"step_number":2,"step_name":"Water-based Cleanser","step_description":"Follow with water-based cleanser for double cleanse","duration_minutes":1,"product_category":"Cleanser"},
+    {"step_number":3,"step_name":"Toner","step_description":"Balance skin pH with a hydrating toner","duration_minutes":1,"product_category":"Toner"},
+    {"step_number":4,"step_name":"Treatment Serum","step_description":"Apply active treatment serum (retinol, AHA, or BHA)","duration_minutes":1,"product_category":"Serum"},
+    {"step_number":5,"step_name":"Moisturizer","step_description":"Seal everything with a nourishing night moisturizer","duration_minutes":1,"product_category":"Moisturizer"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Quick AM Essentials","routine_type":"Morning","description":"5-minute morning routine for busy days","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Cleanse","step_description":"Quick wash with micellar water or gentle cleanser","duration_minutes":1,"product_category":"Cleanser"},
+    {"step_number":2,"step_name":"Moisturize + SPF","step_description":"Apply moisturizer with built-in SPF","duration_minutes":1,"product_category":"Moisturizer"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Acne Control","routine_type":"Evening","description":"Targeted routine for acne-prone skin","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Salicylic Acid Cleanser","step_description":"Cleanse with BHA-containing cleanser","duration_minutes":2,"product_category":"Cleanser"},
+    {"step_number":2,"step_name":"Exfoliating Toner","step_description":"Apply exfoliating toner with salicylic acid","duration_minutes":1,"product_category":"Toner"},
+    {"step_number":3,"step_name":"Acne Treatment","step_description":"Apply spot treatment or benzoyl peroxide","duration_minutes":1,"product_category":"Treatment"},
+    {"step_number":4,"step_name":"Oil-free Moisturizer","step_description":"Hydrate with non-comedogenic gel moisturizer","duration_minutes":1,"product_category":"Moisturizer"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Hydration Boost","routine_type":"Morning","description":"Extra hydrating routine for dry and dehydrated skin","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Cream Cleanser","step_description":"Use a nourishing cream cleanser","duration_minutes":2,"product_category":"Cleanser"},
+    {"step_number":2,"step_name":"Hyaluronic Acid Serum","step_description":"Apply on damp skin for maximum hydration","duration_minutes":1,"product_category":"Serum"},
+    {"step_number":3,"step_name":"Barrier Cream","step_description":"Apply rich moisturizer with ceramides","duration_minutes":1,"product_category":"Moisturizer"},
+    {"step_number":4,"step_name":"SPF","step_description":"Finish with hydrating SPF","duration_minutes":1,"product_category":"SPF"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Shampoo & Condition","routine_type":"Hair","description":"Essential wash day routine for all hair types","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Pre-shampoo Treatment","step_description":"Apply hair oil or mask before washing","duration_minutes":10,"product_category":"Hair Mask"},
+    {"step_number":2,"step_name":"Shampoo","step_description":"Cleanse scalp and hair with shampoo","duration_minutes":3,"product_category":"Shampoo"},
+    {"step_number":3,"step_name":"Conditioner","step_description":"Apply conditioner from mid-lengths to ends","duration_minutes":3,"product_category":"Conditioner"},
+    {"step_number":4,"step_name":"Leave-in Treatment","step_description":"Apply leave-in conditioner or hair serum","duration_minutes":1,"product_category":"Hair Serum"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Deep Condition","routine_type":"Hair","description":"Intensive hair treatment routine for damaged hair","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Shampoo","step_description":"Clarify hair with gentle shampoo","duration_minutes":3,"product_category":"Shampoo"},
+    {"step_number":2,"step_name":"Deep Conditioning Mask","step_description":"Apply hydrating hair mask","duration_minutes":15,"product_category":"Hair Mask"},
+    {"step_number":3,"step_name":"Cool Rinse","step_description":"Rinse with cool water to seal cuticles","duration_minutes":2,"product_category":"Conditioner"},
+    {"step_number":4,"step_name":"Hair Oil","step_description":"Apply nourishing hair oil to damp ends","duration_minutes":1,"product_category":"Hair Serum"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Scalp Care","routine_type":"Hair","description":"Scalp treatment routine for healthy hair growth","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Scalp Scrub","step_description":"Exfoliate scalp with gentle scrub","duration_minutes":3,"product_category":"Shampoo"},
+    {"step_number":2,"step_name":"Medicated Shampoo","step_description":"Use treatment shampoo for scalp concerns","duration_minutes":3,"product_category":"Shampoo"},
+    {"step_number":3,"step_name":"Scalp Serum","step_description":"Apply scalp treatment serum","duration_minutes":1,"product_category":"Treatment"},
+    {"step_number":4,"step_name":"Lightweight Conditioner","step_description":"Condition only the ends of hair","duration_minutes":2,"product_category":"Conditioner"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Curly Girl Method","routine_type":"Hair","description":"Sulfate-free, silicone-free routine for curly hair","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Co-wash","step_description":"Cleanse with conditioner-only wash","duration_minutes":5,"product_category":"Conditioner"},
+    {"step_number":2,"step_name":"Leave-in Conditioner","step_description":"Apply generous leave-in to wet hair","duration_minutes":2,"product_category":"Conditioner"},
+    {"step_number":3,"step_name":"Styling Cream","step_description":"Apply curl cream for definition","duration_minutes":2,"product_category":"Hair Serum"},
+    {"step_number":4,"step_name":"Gel","step_description":"Scrunch with gel for hold and cast","duration_minutes":2,"product_category":"Treatment"}
+  ]},
+  {"doctype":"Routine Template","template_name":"Weekly Glow Up","routine_type":"Weekly","description":"Weekly intensive skincare treatment for extra radiance","is_active":1,"steps":[
+    {"step_number":1,"step_name":"Chemical Exfoliant","step_description":"Apply AHA/BHA exfoliating treatment","duration_minutes":10,"product_category":"Treatment"},
+    {"step_number":2,"step_name":"Sheet Mask","step_description":"Apply hydrating or brightening sheet mask","duration_minutes":15,"product_category":"Serum"},
+    {"step_number":3,"step_name":"Eye Mask","step_description":"Apply under-eye patches or cream","duration_minutes":10,"product_category":"Moisturizer"},
+    {"step_number":4,"step_name":"Sleeping Mask","step_description":"Finish with overnight sleeping mask","duration_minutes":1,"product_category":"Moisturizer"}
+  ]}
+]

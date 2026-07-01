@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../widgets/common/aura_button.dart';
+import '../../providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -22,7 +23,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _agreeToTerms = false;
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -41,16 +41,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       );
       return;
     }
-    setState(() => _isLoading = true);
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      context.go('/onboarding');
-    });
+    if (ref.read(authProvider).isLoading) return;
+    ref.read(authProvider.notifier).register(
+      _emailController.text.trim(),
+      _passwordController.text,
+      _nameController.text.trim(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (previous?.isAuthenticated == false && next.isAuthenticated) {
+        context.go('/onboarding');
+      }
+      if (next.error != null && previous?.error != next.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.error!),
+            backgroundColor: Colors.red.shade700,
+          ),
+        );
+      }
+    });
+
+    final authState = ref.watch(authProvider);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -188,7 +203,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 AuraButton(
                   label: 'Create Account',
                   onPressed: _handleRegister,
-                  isLoading: _isLoading,
+                  isLoading: authState.isLoading,
                 ),
                 const SizedBox(height: 24),
                 Center(

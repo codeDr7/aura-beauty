@@ -1,0 +1,7 @@
+[
+  {"doctype":"Marketplace Partner","company_name":"GlowLab Organics","contact_email":"partners@glowlab.com","contact_person":"Sarah Chen","commission_percent":15,"integration_type":"Manual","country":"United States","status":"Active","is_active":1},
+  {"doctype":"Marketplace Partner","company_name":"PureScience Beauty","contact_email":"b2b@purescience.co","contact_person":"Michael Torres","commission_percent":20,"integration_type":"Custom API","country":"Canada","status":"Active","is_active":1},
+  {"doctype":"Marketplace Partner","company_name":"Botanic Elixirs","contact_email":"wholesale@botanicelixirs.com","contact_person":"Aisha Patel","commission_percent":12,"integration_type":"Manual","country":"United Kingdom","status":"Active","is_active":1},
+  {"doctype":"Marketplace Partner","company_name":"DermaPro Labs","contact_email":"partner@dermapro.io","contact_person":"James Wilson","commission_percent":25,"integration_type":"Custom API","country":"Germany","status":"Active","is_active":1},
+  {"doctype":"Marketplace Partner","company_name":"NaturalGlow Co","contact_email":"retail@naturalglow.me","contact_person":"Layla Hassan","commission_percent":10,"integration_type":"Manual","country":"United Arab Emirates","status":"Active","is_active":1}
+]

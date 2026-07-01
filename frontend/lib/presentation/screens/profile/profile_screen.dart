@@ -8,41 +8,62 @@ import '../../widgets/common/aura_top_bar.dart';
 import '../../widgets/common/aura_card.dart';
 import '../../widgets/common/aura_button.dart';
 import '../../widgets/common/score_indicator.dart';
+import '../../../domain/entities/user.dart';
+import '../../providers/profile_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(profileProvider);
+
+    ref.listen(profileProvider, (prev, next) {
+      if (prev == null || (!prev.isLoading && next.isLoading)) { return; }
+      if (!next.isLoading && next.error != null && prev?.error != next.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile: ${next.error}')),
+        );
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (profileState.userProfile == null && !profileState.isLoading) {
+        ref.read(profileProvider.notifier).loadProfile();
+      }
+    });
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            const AuraTopBar(
-              title: 'Profile',
-            ),
+            AuraTopBar(title: 'Profile'),
             Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const _UserHeader(),
-                    const SizedBox(height: AppSpacing.lg),
-                    const _BeautyProfileCard(),
-                    const SizedBox(height: AppSpacing.lg),
-                    const _AssessmentScores(),
-                    const SizedBox(height: AppSpacing.lg),
-                    const _SubscriptionCard(),
-                    const SizedBox(height: AppSpacing.lg),
-                    const _SettingsList(),
-                    const SizedBox(height: AppSpacing.lg),
-                    _SignOutButton(),
-                    const SizedBox(height: AppSpacing.xxl),
-                  ],
-                ),
-              ),
+              child: profileState.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : profileState.error != null && profileState.userProfile == null
+                      ? Center(child: Text('Could not load profile', style: AppTypography.body.copyWith(color: AppColors.onSurfaceVariant)))
+                      : SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _UserHeader(user: profileState.userProfile),
+                              const SizedBox(height: AppSpacing.lg),
+                              const _BeautyProfileCard(),
+                              const SizedBox(height: AppSpacing.lg),
+                              const _AssessmentScores(),
+                              const SizedBox(height: AppSpacing.lg),
+                              const _SubscriptionCard(),
+                              const SizedBox(height: AppSpacing.lg),
+                              const _SettingsList(),
+                              const SizedBox(height: AppSpacing.lg),
+                              _SignOutButton(),
+                              const SizedBox(height: AppSpacing.xxl),
+                            ],
+                          ),
+                        ),
             ),
           ],
         ),
@@ -52,10 +73,13 @@ class ProfileScreen extends ConsumerWidget {
 }
 
 class _UserHeader extends StatelessWidget {
-  const _UserHeader();
+  final User? user;
+  const _UserHeader({this.user});
 
   @override
   Widget build(BuildContext context) {
+    final displayName = user?.name ?? 'User';
+    final tier = user?.subscriptionTier ?? 'Free';
     return Padding(
       padding: AppSpacing.horizontalPadding,
       child: Column(
@@ -84,7 +108,7 @@ class _UserHeader extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Text('Sarah A.', style: AppTypography.cardTitle.copyWith(color: AppColors.softCharcoal)),
+          Text(displayName, style: AppTypography.cardTitle.copyWith(color: AppColors.softCharcoal)),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -92,17 +116,17 @@ class _UserHeader extends StatelessWidget {
               color: AppColors.matteGold.withOpacity(0.12),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text('Aura Plus Member', style: AppTypography.caption.copyWith(color: AppColors.matteGold, fontWeight: FontWeight.w600)),
+            child: Text('$tier Member', style: AppTypography.caption.copyWith(color: AppColors.matteGold, fontWeight: FontWeight.w600)),
           ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _StatItem(value: '48', label: 'Entries'),
+              _StatItem(value: '0', label: 'Entries'),
               Container(width: 1, height: 24, color: AppColors.outlineVariant),
-              _StatItem(value: '5', label: 'Posts'),
+              _StatItem(value: '0', label: 'Posts'),
               Container(width: 1, height: 24, color: AppColors.outlineVariant),
-              _StatItem(value: '3', label: 'Challenges'),
+              _StatItem(value: '0', label: 'Challenges'),
             ],
           ),
         ],
